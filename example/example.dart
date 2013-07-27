@@ -11,8 +11,11 @@ void main() {
   var renderLoop = new RenderLoop();
   renderLoop.addStage(stage);
 
-  //var app = new IsoApplication1();
-  var app = new IsoApplication2();
+  var background = new Bitmap(new BitmapData(800,600, false, 0x869ca7));
+  stage.addChild(background);
+
+  var app = new IsoApplication1();
+  //var app = new IsoApplication2();
   app.x = 400;
   app.y = 200;
   stage.addChild(app);
@@ -25,9 +28,15 @@ class IsoApplication1 extends Sprite {
     box.setSize(25, 25, 25);
     box.moveTo(0, 0, 0);
 
+    var grid = new IsoGrid();
+    grid.showOrigin = true;
+    grid.setGridSize(10, 10);
+    grid.moveTo(0, 0, 0);
+
     var scene = new IsoScene();
     scene.hostContainer = this;
     scene.addChild(box);
+    scene.addChild(grid);
     scene.isoRender();
   }
 }

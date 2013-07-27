@@ -7,7 +7,7 @@ class IsoOrigin extends IsoPrimitive {
 
   IsoOrigin([Map descriptor = null]):super(descriptor) {
 
-    if (descriptor != null || descriptor.containsKey("strokes") == false) {
+    if (descriptor == null || descriptor.containsKey("strokes") == false) {
       strokes = [
         new Stroke(0, 0xFF0000, 0.75),
         new Stroke(0, 0x00FF00, 0.75),
@@ -15,7 +15,7 @@ class IsoOrigin extends IsoPrimitive {
       ];
     }
 
-    if (descriptor != null || !descriptor.containsKey("fills") == false) {
+    if (descriptor == null || descriptor.containsKey("fills") == false) {
       fills = [
         new SolidColorFill(0xFF0000, 0.75),
         new SolidColorFill(0x00FF00, 0.75),
@@ -26,31 +26,28 @@ class IsoOrigin extends IsoPrimitive {
 
   void _drawGeometry() { // protected
 
-    var pt0 = IsoMath.isoToScreen(new Pt(-1 * axisLength, 0, 0));
-    var ptM;
-    var pt1 = IsoMath.isoToScreen(new Pt(axisLength, 0, 0));
+    Pt pt0, pt1, ptM;
+    Graphics g = _mainContainer.graphics;
 
-    var g = _mainContainer.graphics;
     g.clear();
 
     //draw x-axis
     var stroke = strokes[0] as StrokeBase;
     var fill = fills[0] as FillBase;
 
-    stroke.apply(g);
+    pt0 = IsoMath.isoToScreen(new Pt(-1 * axisLength, 0, 0));
+    pt1 = IsoMath.isoToScreen(new Pt(axisLength, 0, 0));
+
+    fill.begin(g);
+    g.beginPath();
     g.moveTo(pt0.x, pt0.y);
     g.lineTo(pt1.x, pt1.y);
-
-    //g.lineStyle(0, 0, 0);
     g.moveTo(pt0.x, pt0.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(-1 * axisLength, 0), 180, arrowLength, arrowWidth);
-    fill.end(g);
-
     g.moveTo(pt1.x, pt1.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(axisLength, 0), 0, arrowLength, arrowWidth);
     fill.end(g);
+    stroke.apply(g);
 
     //draw y-axis
     stroke = strokes[1] as StrokeBase;
@@ -59,20 +56,16 @@ class IsoOrigin extends IsoPrimitive {
     pt0 = IsoMath.isoToScreen(new Pt(0, -1 * axisLength, 0));
     pt1 = IsoMath.isoToScreen(new Pt(0, axisLength, 0));
 
-    stroke.apply(g);
+    fill.begin(g);
+    g.beginPath();
     g.moveTo(pt0.x, pt0.y);
     g.lineTo(pt1.x, pt1.y);
-
-    //g.lineStyle(0, 0, 0);
     g.moveTo(pt0.x, pt0.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(0, -1 * axisLength), 270, arrowLength, arrowWidth);
-    fill.end(g);
-
     g.moveTo(pt1.x, pt1.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(0, axisLength), 90, arrowLength, arrowWidth);
     fill.end(g);
+    stroke.apply(g);
 
     //draw z-axis
     stroke = strokes[2] as StrokeBase;
@@ -81,20 +74,16 @@ class IsoOrigin extends IsoPrimitive {
     pt0 = IsoMath.isoToScreen(new Pt(0, 0, -1 * axisLength));
     pt1 = IsoMath.isoToScreen(new Pt(0, 0, axisLength));
 
-    stroke.apply(g);
+    fill.begin(g);
+    g.beginPath();
     g.moveTo(pt0.x, pt0.y);
     g.lineTo(pt1.x, pt1.y);
-
-    //g.lineStyle(0, 0, 0);
     g.moveTo(pt0.x, pt0.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, axisLength), 90, arrowLength, arrowWidth, IsoOrientation.XZ);
-    fill.end(g);
-
     g.moveTo(pt1.x, pt1.y);
-    fill.begin(g);
     IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, -1 * axisLength), 270, arrowLength, arrowWidth, IsoOrientation.YZ);
     fill.end(g);
+    stroke.apply(g);
   }
 
   /**

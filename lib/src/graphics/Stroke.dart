@@ -61,6 +61,8 @@ class Stroke implements StrokeBase {
 
   void apply (Graphics target) {
     // target.lineStyle(weight, color, alpha, usePixelHinting, scaleMode, caps, joints, miterLimit);
-    target.strokeColor(color, weight, joints, caps);
+
+    var c = (color & 0xFFFFFF) | ((0xFF * alpha).toInt() << 24);
+    target.strokeColor(c, weight, joints, caps);
   }
 }

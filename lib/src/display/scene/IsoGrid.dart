@@ -136,8 +136,6 @@ class IsoGrid extends IsoPrimitive {
     g.clear();
 
     var stroke = strokes[0] as StrokeBase;
-    if (stroke != null) stroke.apply(g);
-
     var pt = new Pt();
 
     int i = 0;
@@ -160,10 +158,11 @@ class IsoGrid extends IsoPrimitive {
       i++;
     }
 
+    if (stroke != null) stroke.apply(g);
+
     //now add the invisible layer to receive mouse events
     pt = IsoMath.isoToScreen(new Pt(0, 0));
     g.moveTo(pt.x, pt.y);
-//    g.lineStyle(0, 0, 0);
 
     pt = IsoMath.isoToScreen(new Pt(_cSize * gridSize[0], 0));
     g.lineTo(pt.x, pt.y);
@@ -176,6 +175,8 @@ class IsoGrid extends IsoPrimitive {
 
     pt = IsoMath.isoToScreen(new Pt(0, 0));
     g.lineTo(pt.x, pt.y);
-    g.fillColor(0x80FF0000);
+
+   // g.fillColor(0x80FF0000);
+
   }
 }
