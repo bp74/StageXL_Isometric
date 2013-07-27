@@ -1,90 +1,43 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+class SimpleSceneLayoutRenderer implements SceneLayoutRendererBase {
 
-http://code.google.com/p/as3isolib/
+  /**
+   * Array of propert names to sort scene's children by.  The default value is <code>["y", "x", "z"]</code>.
+   */
+  List sortOnProps = ["y", "x", "z"];
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  ////////////////////////////////////////////////////
+  //      RENDER SCENE
+  ////////////////////////////////////////////////////
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  void renderScene (IsoSceneBase scene) {
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    var children = new List.from(scene.displayListChildren);
+    //children.sortOn(sortOnProps, Array.NUMERIC);
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    // ToDo: implement "sortOn" method workaround
 
-*/
-package as3isolib.display.renderers
-{
-        import as3isolib.core.IIsoDisplayObject;
-        import as3isolib.display.scene.IIsoScene;
+    int i = 0;
+    var m = children.length;
+    while (i < m) {
+      var child = children[i] as IsoDisplayObjectBase;
+      if (child.depth != i) {
+        scene.setChildIndex(child, i);
+      }
+      i++;
+    }
+  }
 
-        public class SimpleSceneLayoutRenderer implements ISceneLayoutRenderer
-        {
-                /**
-                 * Array of propert names to sort scene's children by.  The default value is <code>["y", "x", "z"]</code>.
-                 */
-                public var sortOnProps:Array = ["y", "x", "z"];
+  /////////////////////////////////////////////////////////////////
+  //      COLLISION DETECTION
+  /////////////////////////////////////////////////////////////////
 
-                ////////////////////////////////////////////////////
-                //      RENDER SCENE
-                ////////////////////////////////////////////////////
+  dynamic _collisionDetectionFunc = null;
 
-                /**
-                 * @inheritDoc
-                 */
-                public function renderScene (scene:IIsoScene):void
-                {
-                        var children:Array = scene.displayListChildren.slice();
-                        children.sortOn(sortOnProps, Array.NUMERIC);
+  dynamic get collisionDetection => _collisionDetectionFunc;
 
-                        var child:IIsoDisplayObject;
-
-                        var i:uint;
-                        var m:uint = children.length;
-                        while (i < m)
-                        {
-                                child = IIsoDisplayObject(children[i]);
-                                if (child.depth != i)
-                                        scene.setChildIndex(child, i);
-
-                                i++;
-                        }
-                }
-
-                /////////////////////////////////////////////////////////////////
-                //      COLLISION DETECTION
-                /////////////////////////////////////////////////////////////////
-
-                private var collisionDetectionFunc:Function = null;
-
-                /**
-                 * @inheritDoc
-                 */
-                public function get collisionDetection ():Function
-                {
-                        return collisionDetectionFunc;
-                }
-
-                /**
-                 * @private
-                 */
-                public function set collisionDetection (value:Function):void
-                {
-                        collisionDetectionFunc = value;
-                }
-        }
+  set collisionDetection (dynamic value) {
+    _collisionDetectionFunc = value;
+  }
 }

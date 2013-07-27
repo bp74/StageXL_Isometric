@@ -1,196 +1,130 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+/**
+ * IsoOrigin is a visual class that depicts the origin pt (typically at 0, 0, 0) with multicolored axis lines.
+ */
+class IsoOrigin extends IsoPrimitive {
 
-http://code.google.com/p/as3isolib/
+  IsoOrigin([Map descriptor = null]):super(descriptor) {
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+    if (descriptor != null || descriptor.containsKey("strokes") == false) {
+      strokes = [
+        new Stroke(0, 0xFF0000, 0.75),
+        new Stroke(0, 0x00FF00, 0.75),
+        new Stroke(0, 0x0000FF, 0.75)
+      ];
+    }
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+    if (descriptor != null || !descriptor.containsKey("fills") == false) {
+      fills = [
+        new SolidColorFill(0xFF0000, 0.75),
+        new SolidColorFill(0x00FF00, 0.75),
+        new SolidColorFill(0x0000FF, 0.75)
+      ];
+    }
+  }
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  void _drawGeometry() { // protected
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    var pt0 = IsoMath.isoToScreen(new Pt(-1 * axisLength, 0, 0));
+    var ptM;
+    var pt1 = IsoMath.isoToScreen(new Pt(axisLength, 0, 0));
 
-*/
-package as3isolib.display.scene
-{
-        import as3isolib.core.as3isolib_internal;
-        import as3isolib.display.primitive.IsoPrimitive;
-        import as3isolib.enum.IsoOrientation;
-        import as3isolib.geom.IsoMath;
-        import as3isolib.geom.Pt;
-        import as3isolib.graphics.IFill;
-        import as3isolib.graphics.IStroke;
-        import as3isolib.graphics.SolidColorFill;
-        import as3isolib.graphics.Stroke;
-        import as3isolib.utils.IsoDrawingUtil;
+    var g = _mainContainer.graphics;
+    g.clear();
 
-        import flash.display.Graphics;
+    //draw x-axis
+    var stroke = strokes[0] as StrokeBase;
+    var fill = fills[0] as FillBase;
 
-        use namespace as3isolib_internal;
+    stroke.apply(g);
+    g.moveTo(pt0.x, pt0.y);
+    g.lineTo(pt1.x, pt1.y);
 
-        /**
-         * IsoOrigin is a visual class that depicts the origin pt (typically at 0, 0, 0) with multicolored axis lines.
-         */
-        public class IsoOrigin extends IsoPrimitive
-        {
-                /**
-                 * @inheritDoc
-                 */
-                override protected function drawGeometry ():void
-                {
-                        var pt0:Pt = IsoMath.isoToScreen(new Pt(-1 * axisLength, 0, 0));
-                        var ptM:Pt;
-                        var pt1:Pt = IsoMath.isoToScreen(new Pt(axisLength, 0, 0));
+    //g.lineStyle(0, 0, 0);
+    g.moveTo(pt0.x, pt0.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(-1 * axisLength, 0), 180, arrowLength, arrowWidth);
+    fill.end(g);
 
-                        var g:Graphics = mainContainer.graphics;
-                        g.clear();
+    g.moveTo(pt1.x, pt1.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(axisLength, 0), 0, arrowLength, arrowWidth);
+    fill.end(g);
 
-                        //draw x-axis
-                        var stroke:IStroke = IStroke(strokes[0]);
-                        var fill:IFill = IFill(fills[0]);
+    //draw y-axis
+    stroke = strokes[1] as StrokeBase;
+    fill = fills[1] as FillBase;
 
-                        stroke.apply(g);
-                        g.moveTo(pt0.x, pt0.y);
-                        g.lineTo(pt1.x, pt1.y);
+    pt0 = IsoMath.isoToScreen(new Pt(0, -1 * axisLength, 0));
+    pt1 = IsoMath.isoToScreen(new Pt(0, axisLength, 0));
 
-                        g.lineStyle(0, 0, 0);
-                        g.moveTo(pt0.x, pt0.y);
-                        fill.begin(g);
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(-1 * axisLength, 0), 180, arrowLength, arrowWidth);
-                        fill.end(g);
+    stroke.apply(g);
+    g.moveTo(pt0.x, pt0.y);
+    g.lineTo(pt1.x, pt1.y);
 
-                        g.moveTo(pt1.x, pt1.y);
-                        fill.begin(g);
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(axisLength, 0), 0, arrowLength, arrowWidth);
-                        fill.end(g);
+    //g.lineStyle(0, 0, 0);
+    g.moveTo(pt0.x, pt0.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(0, -1 * axisLength), 270, arrowLength, arrowWidth);
+    fill.end(g);
 
-                        //draw y-axis
-                        stroke = IStroke(strokes[1]);
-                        fill = IFill(fills[1]);
+    g.moveTo(pt1.x, pt1.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(0, axisLength), 90, arrowLength, arrowWidth);
+    fill.end(g);
 
-                        pt0 = IsoMath.isoToScreen(new Pt(0, -1 * axisLength, 0));
-                        pt1 = IsoMath.isoToScreen(new Pt(0, axisLength, 0));
+    //draw z-axis
+    stroke = strokes[2] as StrokeBase;
+    fill = fills[2] as FillBase;
 
-                        stroke.apply(g);
-                        g.moveTo(pt0.x, pt0.y);
-                        g.lineTo(pt1.x, pt1.y);
+    pt0 = IsoMath.isoToScreen(new Pt(0, 0, -1 * axisLength));
+    pt1 = IsoMath.isoToScreen(new Pt(0, 0, axisLength));
 
-                        g.lineStyle(0, 0, 0);
-                        g.moveTo(pt0.x, pt0.y);
-                        fill.begin(g)
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(0, -1 * axisLength), 270, arrowLength, arrowWidth);
-                        fill.end(g);
+    stroke.apply(g);
+    g.moveTo(pt0.x, pt0.y);
+    g.lineTo(pt1.x, pt1.y);
 
-                        g.moveTo(pt1.x, pt1.y);
-                        fill.begin(g);
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(0, axisLength), 90, arrowLength, arrowWidth);
-                        fill.end(g);
+    //g.lineStyle(0, 0, 0);
+    g.moveTo(pt0.x, pt0.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, axisLength), 90, arrowLength, arrowWidth, IsoOrientation.XZ);
+    fill.end(g);
 
-                        //draw z-axis
-                        stroke = IStroke(strokes[2]);
-                        fill = IFill(fills[2]);
+    g.moveTo(pt1.x, pt1.y);
+    fill.begin(g);
+    IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, -1 * axisLength), 270, arrowLength, arrowWidth, IsoOrientation.YZ);
+    fill.end(g);
+  }
 
-                        pt0 = IsoMath.isoToScreen(new Pt(0, 0, -1 * axisLength));
-                        pt1 = IsoMath.isoToScreen(new Pt(0, 0, axisLength));
+  /**
+   * The length of each axis (not including the arrows).
+   */
+  num axisLength = 100;
 
-                        stroke.apply(g);
-                        g.moveTo(pt0.x, pt0.y);
-                        g.lineTo(pt1.x, pt1.y);
+  /**
+   * The arrow length for each arrow found on each axis.
+   */
+  num arrowLength = 20;
 
-                        g.lineStyle(0, 0, 0);
-                        g.moveTo(pt0.x, pt0.y);
-                        fill.begin(g)
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, axisLength), 90, arrowLength, arrowWidth, IsoOrientation.XZ);
-                        fill.end(g);
+  /**
+   * The arrow width for each arrow found on each axis.
+   * This is the total width of the arrow at the base.
+   */
+  num arrowWidth = 3;
 
-                        g.moveTo(pt1.x, pt1.y);
-                        fill.begin(g);
-                        IsoDrawingUtil.drawIsoArrow(g, new Pt(0, 0, -1 * axisLength), 270, arrowLength, arrowWidth, IsoOrientation.YZ);
-                        fill.end(g);
-                }
+  /**
+   * @inheritDoc
+   */
+  set width (num value) {
+    super.width = 0;
+  }
 
-                /**
-                 * The length of each axis (not including the arrows).
-                 */
-                public var axisLength:Number = 100;
+  set length(num value) {
+    super.length = 0;
+  }
 
-                /**
-                 * The arrow length for each arrow found on each axis.
-                 */
-                public var arrowLength:Number = 20;
-
-                /**
-                 * The arrow width for each arrow found on each axis.
-                 * This is the total width of the arrow at the base.
-                 */
-                public var arrowWidth:Number = 3;
-
-                /**
-                 * Constructor
-                 */
-                public function IsoOrigin (descriptor:Object = null)
-                {
-                        super(descriptor);
-
-                        if (!descriptor || !descriptor.hasOwnProperty("strokes"))
-                        {
-                                strokes =
-                                [
-                                        new Stroke(0, 0xFF0000, 0.75),
-                                        new Stroke(0, 0x00FF00, 0.75),
-                                        new Stroke(0, 0x0000FF, 0.75)
-                                ];
-                        }
-
-                        if (!descriptor || !descriptor.hasOwnProperty("fills"))
-                        {
-                                fills =
-                                [
-                                        new SolidColorFill(0xFF0000, 0.75),
-                                        new SolidColorFill(0x00FF00, 0.75),
-                                        new SolidColorFill(0x0000FF, 0.75)
-                                ]
-                        }
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function set width (value:Number):void
-                {
-                        super.width = 0;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function set length (value:Number):void
-                {
-                        super.length = 0;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function set height (value:Number):void
-                {
-                        super.height = 0;
-                }
-        }
+  set height (num value) {
+    super.height = 0;
+  }
 }

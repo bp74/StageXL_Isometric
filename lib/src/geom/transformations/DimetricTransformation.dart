@@ -1,35 +1,24 @@
-package as3isolib.geom.transformations
-{
-        import as3isolib.geom.Pt;
+part of stagexl_isometric;
 
-        /**
-         * @private
-         */
-        public class DimetricTransformation implements IAxonometricTransformation
-        {
-                public function DimetricTransformation ()
-                {
-                }
+/**
+ * private
+ */
+class DimetricTransformation implements AxonometricTransformationBase {
 
-                public function screenToSpace (screenPt:Pt):Pt
-                {
-                        return null;
-                }
+  DimetricTransformation() {
+  }
 
-                public function spaceToScreen (spacePt:Pt):Pt
-                {
-                        /* if (bAxonometricAxesProjection)
-                        {
-                                spacePt.x = spacePt.x * axialProjection;
-                                spacePt.y = spacePt.y * axialProjection;
-                        } */
+  @override
+  Pt screenToSpace (Pt screenPt ) {
+    return null;
+  }
 
-                        var z:Number = spacePt.z;
-                        var y:Number = spacePt.y / 4 - spacePt.z;
-                        var x:Number = spacePt.x - spacePt.y / 2;
+  @override
+  Pt spaceToScreen (Pt spacePt) {
+    var z = spacePt.z;
+    var y = spacePt.y / 4 - spacePt.z;
+    var x = spacePt.x - spacePt.y / 2;
+    return new Pt(x, y, z);
+  }
 
-                        return new Pt(x, y, z);
-                }
-
-        }
 }

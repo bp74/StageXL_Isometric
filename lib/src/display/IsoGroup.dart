@@ -1,181 +1,88 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
 
-http://code.google.com/p/as3isolib/
+  ///////////////////////////////////////////////////////////////////////
+  //      CONSTRUCTOR
+  ///////////////////////////////////////////////////////////////////////
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  IsoGroup([Map descriptor = null]): super(descriptor);
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  ///////////////////////////////////////////////////////////////////////
+  //      I ISO SCENE
+  ///////////////////////////////////////////////////////////////////////
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  DisplayObjectContainer get hostContainer => null;
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  set hostContainer(DisplayObjectContainer value) {
+    //do nothing
+  }
 
-*/
-package as3isolib.display
-{
-        import as3isolib.bounds.IBounds;
-        import as3isolib.bounds.PrimitiveBounds;
-        import as3isolib.bounds.SceneBounds;
-        import as3isolib.core.IIsoDisplayObject;
-        import as3isolib.core.IsoDisplayObject;
-        import as3isolib.core.as3isolib_internal;
-        import as3isolib.display.renderers.ISceneLayoutRenderer;
-        import as3isolib.display.renderers.SimpleSceneLayoutRenderer;
-        import as3isolib.display.scene.IIsoScene;
+  List get invalidatedChildren {
+    var a = new List();
 
-        import flash.display.DisplayObjectContainer;
+    for (var child in children) {
+      if (child.isInvalidated) {
+        a.add(child);
+      }
+    }
 
-        use namespace as3isolib_internal;
+    return a;
+  }
 
-        public class IsoGroup extends IsoDisplayObject implements IIsoScene
-        {
-                ///////////////////////////////////////////////////////////////////////
-                //      CONSTRUCTOR
-                ///////////////////////////////////////////////////////////////////////
+  BoundsBase get isoBounds {
+    return _bSizeSetExplicitly ? new PrimitiveBounds(this) : new SceneBounds(this);
+  }
 
-                /**
-                 * Constructor
-                 */
-                public function IsoGroup( descriptor:Object = null )
-                {
-                        super( descriptor );
-                }
+  ///////////////////////////////////////////////////////////////////////
+  //      WIDTH LENGTH HEIGHT
+  ///////////////////////////////////////////////////////////////////////
 
-                ///////////////////////////////////////////////////////////////////////
-                //      I ISO SCENE
-                ///////////////////////////////////////////////////////////////////////
+  bool _bSizeSetExplicitly = false;
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get hostContainer():DisplayObjectContainer
-                {
-                        return null;
-                }
+  void set width(num value) {
+    super.width = value;
+    _bSizeSetExplicitly = !value.isNaN;
+  }
 
-                /**
-                 * @private
-                 */
-                public function set hostContainer( value:DisplayObjectContainer ):void
-                {
-                        //do nothing
-                }
+  set length(num value) {
+    super.length = value;
+    _bSizeSetExplicitly = !value.isNaN;
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get invalidatedChildren():Array
-                {
-                        var a:Array;
+  set height(num  value) {
+    super.height = value;
+    _bSizeSetExplicitly = value.isNaN;
+  }
 
-                        var child:IIsoDisplayObject;
+  ///////////////////////////////////////////////////////////////////////
+  //      ISO GROUP
+  ///////////////////////////////////////////////////////////////////////
 
-                        for each ( child in children )
-                        {
-                                if ( child.isInvalidated )
-                                        a.push( child );
-                        }
+  SceneLayoutRendererBase renderer = new SimpleSceneLayoutRenderer();
 
-                        return a;
-                }
+  _renderLogic([bool recursive = true]) { // protected
+    super._renderLogic( recursive );
 
-                /**
-                 * @inheritDoc
-                 */
-                override public function get isoBounds():IBounds
-                {
-                        return bSizeSetExplicitly ? new PrimitiveBounds( this ) : new SceneBounds( this );
-                }
+    if (_bIsInvalidated) {
+      if (_bSizeSetExplicitly == false) {
+        _calculateSizeFromChildren();
+      }
 
-                ///////////////////////////////////////////////////////////////////////
-                //      WIDTH LENGTH HEIGHT
-                ///////////////////////////////////////////////////////////////////////
+      if (renderer == null) {
+        renderer = new SimpleSceneLayoutRenderer();
+      }
 
-                private var bSizeSetExplicitly:Boolean;
+      renderer.renderScene( this );
+      _bIsInvalidated = false;
+    }
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                override public function set width( value:Number ):void
-                {
-                        super.width = value;
+  _calculateSizeFromChildren() { // protected
+      var b = new SceneBounds( this );
 
-                        bSizeSetExplicitly = !isNaN( value );
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function set length( value:Number ):void
-                {
-                        super.length = value;
-
-                        bSizeSetExplicitly = !isNaN( value );
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function set height( value:Number ):void
-                {
-                        super.height = value;
-
-                        bSizeSetExplicitly = !isNaN( value );
-                }
-
-                ///////////////////////////////////////////////////////////////////////
-                //      ISO GROUP
-                ///////////////////////////////////////////////////////////////////////
-
-                public var renderer:ISceneLayoutRenderer = new SimpleSceneLayoutRenderer();
-
-                /**
-                 * @inheritDoc
-                 */
-                override protected function renderLogic( recursive:Boolean = true ):void
-                {
-                        super.renderLogic( recursive );
-
-                        if ( bIsInvalidated )
-                        {
-                                if ( !bSizeSetExplicitly )
-                                        calculateSizeFromChildren();
-
-                                if ( !renderer )
-                                        renderer = new SimpleSceneLayoutRenderer();
-
-                                renderer.renderScene( this );
-
-                                bIsInvalidated = false;
-                        }
-                }
-
-                /**
-                 * @private
-                 */
-                protected function calculateSizeFromChildren():void
-                {
-                        var b:IBounds = new SceneBounds( this );
-
-                        isoWidth = b.width;
-                        isoLength = b.length;
-                        isoHeight = b.height;
-                }
-        }
+      _isoWidth = b.width;
+      _isoLength = b.length;
+      _isoHeight = b.height;
+  }
 }

@@ -1,223 +1,95 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+/**
+ * The IBounds implementation for Primitive-type classes
+ */
+class PrimitiveBounds implements BoundsBase {
 
-http://code.google.com/p/as3isolib/
+  IsoDisplayObjectBase _target;
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  ////////////////////////////////////////////////////////////////
+  //      CONSTRUCTOR
+  ////////////////////////////////////////////////////////////////
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  PrimitiveBounds (IsoDisplayObjectBase target): _target = target;
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  ////////////////////////////////////////////////////////////////
+  //      VOLUME
+  ////////////////////////////////////////////////////////////////
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  num get volume =>  _target.width * _target.length * _target.height;
 
-*/
-package as3isolib.bounds
-{
-        import as3isolib.core.IIsoDisplayObject;
-        import as3isolib.geom.Pt;
+  ////////////////////////////////////////////////////////////////
+  //      W / L / H
+  ////////////////////////////////////////////////////////////////
 
-        /**
-         * The IBounds implementation for Primitive-type classes
-         */
-        public class PrimitiveBounds implements IBounds
-        {
-                ////////////////////////////////////////////////////////////////
-                //      W / L / H
-                ////////////////////////////////////////////////////////////////
+  num get width => _target.width;
+  num get length => _target.length;
+  num get height => _target.height;
 
-                public function get volume ():Number
-                {
-                        return _target.width * _target.length * _target.height;
-                }
+  ////////////////////////////////////////////////////////////////
+  //      LEFT / RIGHT
+  ////////////////////////////////////////////////////////////////
 
-                ////////////////////////////////////////////////////////////////
-                //      W / L / H
-                ////////////////////////////////////////////////////////////////
+  num get left => _target.x;
+  num get right => _target.x + _target.width;
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get width ():Number
-                {
-                        return _target.width;
-                }
+  ////////////////////////////////////////////////////////////////
+  //      BACK / FRONT
+  ////////////////////////////////////////////////////////////////
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get length ():Number
-                {
-                        return _target.length;
-                }
+  num get back => _target.y;
+  num get front => _target.y + _target.length;
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get height ():Number
-                {
-                        return _target.height;
-                }
+  ////////////////////////////////////////////////////////////////
+  //      BOTTOM / TOP
+  ////////////////////////////////////////////////////////////////
 
-                ////////////////////////////////////////////////////////////////
-                //      LEFT / RIGHT
-                ////////////////////////////////////////////////////////////////
+  num get bottom => _target.z;
+  num get top => _target.z + _target.height;
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get left ():Number
-                {
-                        return _target.x;
-                }
+  ////////////////////////////////////////////////////////////////
+  //      CENTER PT
+  ////////////////////////////////////////////////////////////////
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get right ():Number
-                {
-                        return _target.x + _target.width;
-                }
+  Pt get centerPt {
+    var pt = new Pt();
+    pt.x = _target.x + _target.width / 2;
+    pt.y = _target.y + _target.length / 2;
+    pt.z = _target.z + _target.height / 2;
+    return pt;
+  }
 
-                ////////////////////////////////////////////////////////////////
-                //      BACK / FRONT
-                ////////////////////////////////////////////////////////////////
+  List<Pt> getPts() {
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get back ():Number
-                {
-                        return _target.y;
-                }
+    return [
+      new Pt(left, back, bottom),
+      new Pt(right, back, bottom),
+      new Pt(right, front, bottom),
+      new Pt(left, front, bottom),
+      new Pt(left, back, top),
+      new Pt(right, back, top),
+      new Pt(right, front, top),
+      new Pt(left, front, top)];
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get front ():Number
-                {
-                        return _target.y + _target.length;
-                }
+  ////////////////////////////////////////////////////////////////
+  //      COLLISION
+  ////////////////////////////////////////////////////////////////
 
-                ////////////////////////////////////////////////////////////////
-                //      BOTTOM / TOP
-                ////////////////////////////////////////////////////////////////
+  bool intersects (BoundsBase bounds) {
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get bottom ():Number
-                {
-                        return _target.z;
-                }
+    return
+        (centerPt.x - bounds.centerPt.x).abs() <= _target.width / 2 + bounds.width / 2 &&
+        (centerPt.y - bounds.centerPt.y).abs() <= _target.length / 2 + bounds.length / 2 &&
+        (centerPt.z - bounds.centerPt.z).abs() <= _target.height / 2 + bounds.height / 2;
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                public function get top ():Number
-                {
-                        return _target.z + _target.height;
-                }
+  bool containsPt (Pt target) {
 
-                ////////////////////////////////////////////////////////////////
-                //      CENTER PT
-                ////////////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                public function get centerPt ():Pt
-                {
-                        var pt:Pt = new Pt();
-                        pt.x = _target.x + _target.width / 2;
-                        pt.y = _target.y + _target.length / 2;
-                        pt.z = _target.z + _target.height / 2;
-
-                        return pt;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function getPts ():Array
-                {
-                        var a:Array = [];
-
-                        a.push(new Pt(left, back, bottom));
-                        a.push(new Pt(right, back, bottom));
-                        a.push(new Pt(right, front, bottom));
-                        a.push(new Pt(left, front, bottom));
-
-                        a.push(new Pt(left, back, top));
-                        a.push(new Pt(right, back, top));
-                        a.push(new Pt(right, front, top));
-                        a.push(new Pt(left, front, top));
-
-                        return a;
-                }
-
-                ////////////////////////////////////////////////////////////////
-                //      COLLISION
-                ////////////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                public function intersects (bounds:IBounds):Boolean
-                {
-                        if (Math.abs(centerPt.x - bounds.centerPt.x) <= _target.width / 2 + bounds.width / 2 &&
-                                Math.abs(centerPt.y - bounds.centerPt.y) <= _target.length / 2 + bounds.length / 2 &&
-                                Math.abs(centerPt.z - bounds.centerPt.z) <= _target.height / 2 + bounds.height / 2)
-
-                                return true;
-
-                        else
-                                return false;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function containsPt (target:Pt):Boolean
-                {
-                        if ((left <= target.x && target.x <= right) &&
-                                (back <= target.y && target.y <= front) &&
-                                (bottom <= target.z && target.z <= top))
-                        {
-                                return true;
-                        }
-
-                        else
-                                return false;
-                }
-
-                private var _target:IIsoDisplayObject;
-
-                ////////////////////////////////////////////////////////////////
-                //      CONSTRUCTOR
-                ////////////////////////////////////////////////////////////////
-
-                /**
-                 * Constructor
-                 */
-                public function PrimitiveBounds (target:IIsoDisplayObject)
-                {
-                        this._target = target;
-                }
-        }
+    return
+        (left <= target.x && target.x <= right) &&
+        (back <= target.y && target.y <= front) &&
+        (bottom <= target.z && target.z <= top);
+  }
 }

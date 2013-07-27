@@ -1,128 +1,73 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+class IsoHexGrid extends IsoGrid {
 
-http://code.google.com/p/as3isolib/
+  IsoHexGrid([Map descriptor = null]) : super(descriptor);
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  void _drawGeometry() {  // protected
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+    Graphics g = _mainContainer.graphics;
+    g.clear();
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    var stroke = strokes[0] as StrokeBase;
+    if (stroke != null) stroke.apply(g);
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    var pts = _generatePts();
+    for (var pt in pts)
+      _drawHexagon(pt, g);
+  }
 
-*/
-package as3isolib.display.scene
-{
-        import as3isolib.geom.IsoMath;
-        import as3isolib.geom.Pt;
-        import as3isolib.graphics.IStroke;
+  List _generatePts() {
 
-        import flash.display.Graphics;
+    List pts = [];
+    num xOffset = cellSize * cos(PI / 3);
+    num yOffset = cellSize * sin(PI / 3);
 
-        /**
-         * @private
-         */
-        public class IsoHexGrid extends IsoGrid
-        {
-                public function IsoHexGrid (descriptor:Object = null)
-                {
-                        super(descriptor);
-                }
+    int i,j;
+    int m = gridSize[0];
+    int n = gridSize[1];
 
-                /**
-                 * @inheritDoc
-                 */
-                override protected function drawGeometry ():void
-                {
-                        var g:Graphics = mainContainer.graphics;
-                        g.clear();
+    while (j < n) {
+      i = 0;
+      while (i < m) {
+        var pt = new Pt();
+        pt.x = i * (cellSize + xOffset);
+        pt.y = j * yOffset * 2;
+        if (i % 2 > 0) pt.y += yOffset;
+        pts.add(pt);
+        i++;
+      }
+      j++;
+    }
 
-                        var stroke:IStroke = IStroke(strokes[0]);
-                        if (stroke)
-                                stroke.apply(g);
+    return pts;
+  }
 
-                        var pt:Pt;
-                        var pts:Array = generatePts();
-                        for each (pt in pts)
-                                drawHexagon(pt, g);
-                }
+  void _drawHexagon (Pt startPt, Graphics g) {
 
-                private function generatePts ():Array
-                {
-                        var pt:Pt;
-                        var pts:Array = [];
+    var pt0 = startPt.clone();
+    var pt1 = Pt.polar(pt0, cellSize, 0);
+    var pt2 = Pt.polar(pt1, cellSize, PI / 3);
+    var pt3 = Pt.polar(pt2, cellSize, 2 * PI / 3);
+    var pt4 = Pt.polar(pt3, cellSize, PI);
+    var pt5 = Pt.polar(pt4, cellSize, 4 * PI / 3);
 
-                        var xOffset:Number = cellSize * Math.cos(Math.PI / 3);
-                        var yOffset:Number = cellSize * Math.sin(Math.PI / 3);
+    var pts = [pt0, pt1, pt2, pt3, pt4, pt5];
 
-                        var i:uint;
-                        var m:uint = uint(gridSize[0]);
+    for (var pt in pts) {
+      IsoMath.isoToScreen(pt);
+    }
 
-                        var j:uint;
-                        var n:uint = uint(gridSize[1]);
-                        while (j < n)
-                        {
-                                i = 0;
+    var random = new Random();
 
-                                while (i < m)
-                                {
-                                        pt = new Pt();
-                                        pt.x = i * (cellSize + xOffset);
-                                        pt.y = j * yOffset * 2;
-                                        if (i % 2 > 0)
-                                                pt.y += yOffset;
-
-                                        pts.push(pt);
-
-                                        i++;
-                                }
-
-                                j++;
-                        }
-
-                        return pts;
-                }
-
-                private function drawHexagon (startPt:Pt, g:Graphics):void
-                {
-                        var pt0:Pt = Pt(startPt.clone());
-                        var pt1:Pt = Pt.polar(pt0, cellSize, 0);
-                        var pt2:Pt = Pt.polar(pt1, cellSize, Math.PI / 3);
-                        var pt3:Pt = Pt.polar(pt2, cellSize, 2 * Math.PI / 3);
-                        var pt4:Pt = Pt.polar(pt3, cellSize, Math.PI);
-                        var pt5:Pt = Pt.polar(pt4, cellSize, 4 * Math.PI / 3);
-
-                        var pt:Pt;
-                        var pts:Array = new Array(pt0, pt1, pt2, pt3, pt4, pt5);
-
-                        for each (pt in pts)
-                                IsoMath.isoToScreen(pt);
-
-                        g.beginFill(0, 0);
-                        g.moveTo(pt0.x, pt0.y);
-                        g.lineTo(pt1.x, pt1.y);
-                        g.lineTo(pt2.x, pt2.y);
-                        g.lineTo(pt3.x, pt3.y);
-                        g.lineTo(pt4.x, pt4.y);
-                        g.lineTo(pt5.x, pt5.y);
-                        g.lineTo(pt0.x, pt0.y);
-                        g.endFill();
-                }
-        }
+    g.beginPath();
+    g.moveTo(pt0.x, pt0.y);
+    g.lineTo(pt1.x, pt1.y);
+    g.lineTo(pt2.x, pt2.y);
+    g.lineTo(pt3.x, pt3.y);
+    g.lineTo(pt4.x, pt4.y);
+    g.lineTo(pt5.x, pt5.y);
+    g.lineTo(pt0.x, pt0.y);
+    g.fillColor(0xFF000000 + random.nextInt(0xFFFFFF));
+  }
 }

@@ -1,58 +1,33 @@
-package as3isolib.geom.transformations
-{
-        import as3isolib.geom.Pt;
+part of stagexl_isometric;
 
-        /**
-         * @private
-         */
-        public class IsometricTransformation implements IAxonometricTransformation
-        {
-                public function IsometricTransformation ()
-                {
-                        cosTheta = Math.cos(30 * Math.PI / 180);
-                        sinTheta = Math.sin(30 * Math.PI / 180);
-                }
+/**
+ * private
+ */
+class IsometricTransformation implements AxonometricTransformationBase {
 
-                private var cosTheta:Number;
-                private var sinTheta:Number;
+  // TODO jwopitz: Figure out the proper conversion - http://www.compuphase.com/axometr.htm
 
-                //TODO jwopitz: Figure out the proper conversion - http://www.compuphase.com/axometr.htm
+  num _cosTheta = cos(30 * PI / 180);
+  num _sinTheta = sin(30 * PI / 180);
 
-                /**
-                 * @inheritDoc
-                 */
-                public function screenToSpace (screenPt:Pt):Pt
-                {
-                        var z:Number = screenPt.z;
-                        var y:Number = screenPt.y - screenPt.x / (2 * cosTheta) + screenPt.z;
-                        var x:Number = screenPt.x / (2 * cosTheta) + screenPt.y + screenPt.z;
+  @override
+  Pt screenToSpace (Pt screenPt) {
 
-                        /* if (bAxonometricAxesProjection)
-                        {
-                                x = x / axialProjection;
-                                y = y / axialProjection;
-                        } */
+    var z = screenPt.z;
+    var y = screenPt.y - screenPt.x / (2 * _cosTheta) + screenPt.z;
+    var x = screenPt.x / (2 * _cosTheta) + screenPt.y + screenPt.z;
 
-                        return new Pt(x, y, z);
-                }
+    return new Pt(x, y, z);
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                public function spaceToScreen (spacePt:Pt):Pt
-                {
-                        /* if (bAxonometricAxesProjection)
-                        {
-                                spacePt.x = spacePt.x * axialProjection;
-                                spacePt.y = spacePt.y * axialProjection;
-                        } */
 
-                        var z:Number = spacePt.z;
-                        var y:Number = (spacePt.x + spacePt.y) * sinTheta - spacePt.z;
-                        var x:Number = (spacePt.x - spacePt.y) * cosTheta;
+  @override
+  Pt spaceToScreen (Pt spacePt) {
 
-                        return new Pt(x, y, z);
-                }
+    var z = spacePt.z;
+    var y = (spacePt.x + spacePt.y) * _sinTheta - spacePt.z;
+    var x = (spacePt.x - spacePt.y) * _cosTheta;
 
-        }
+    return new Pt(x, y, z);
+  }
 }

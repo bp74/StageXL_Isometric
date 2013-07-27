@@ -5,4 +5,5 @@ description: An isometric graphics extension for StageXL.
 homepage: http://www.stagexl.org
 dependencies:
   browser: any
+  meta: any
   stagexl: any

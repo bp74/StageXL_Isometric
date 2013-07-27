@@ -1,294 +1,176 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+class BitmapFill implements BitmapFillBase {
 
-http://code.google.com/p/as3isolib/
+  ///////////////////////////////////////////////////////////
+  //      CONSTRUCTOR
+  ///////////////////////////////////////////////////////////
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  /**
+   * Constructor
+   *
+   * @param source The target that serves as the context for the fill. Any assignment to a BitmapData, DisplayObject, Class, and String (as a fully qualified class path) are valid.
+   * @param orientation The expect orientation of the fill.  Valid values relate to the IsoOrientation constants.
+   * @param matrix A user defined matrix for custom transformations.
+   * @param colorTransform Used to assign additional custom color transformations to the fill.
+   * @param repeat Flag indicating whether to repeat the fill.  If this is false, then the fill will be stretched.
+   * @param smooth Flag indicating whether to smooth the fill.
+   */
+  BitmapFill (dynamic source, [dynamic orientation = null, Matrix matrix = null,
+      ColorTransform colorTransform = null, bool repeat = true]) {
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+    this.source = source;
+    this.orientation = orientation;
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    if (matrix != null) this.matrix = matrix;
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    this.colorTransform = colorTransform;
+    this.repeat = repeat;
+  }
 
-*/
-package as3isolib.graphics
-{
-        import as3isolib.enum.IsoOrientation;
-        import as3isolib.utils.IsoDrawingUtil;
+  ///////////////////////////////////////////////////////////
+  //      SOURCE
+  ///////////////////////////////////////////////////////////
 
-        import flash.display.Bitmap;
-        import flash.display.BitmapData;
-        import flash.display.DisplayObject;
-        import flash.display.Graphics;
-        import flash.geom.ColorTransform;
-        import flash.geom.Matrix;
-        import flash.utils.getDefinitionByName;
-        import flash.utils.getQualifiedSuperclassName;
+  BitmapData _bitmapData;
+  BitmapDrawable _sourceObject;
 
-        public class BitmapFill implements IBitmapFill
-        {
-                ///////////////////////////////////////////////////////////
-                //      CONSTRUCTOR
-                ///////////////////////////////////////////////////////////
+  BitmapDrawable get source => _sourceObject;
 
-                /**
-                 * Constructor
-                 *
-                 * @param source The target that serves as the context for the fill. Any assignment to a BitmapData, DisplayObject, Class, and String (as a fully qualified class path) are valid.
-                 * @param orientation The expect orientation of the fill.  Valid values relate to the IsoOrientation constants.
-                 * @param matrix A user defined matrix for custom transformations.
-                 * @param colorTransform Used to assign additional custom color transformations to the fill.
-                 * @param repeat Flag indicating whether to repeat the fill.  If this is false, then the fill will be stretched.
-                 * @param smooth Flag indicating whether to smooth the fill.
-                 */
-                public function BitmapFill (source:Object, orientation:Object = null, matrix:Matrix = null, colorTransform:ColorTransform = null, repeat:Boolean = true, smooth:Boolean = false)
-                {
-                        this.source = source;
-                        this.orientation = orientation;
+  /**
+   * The source object for the bitmap fill.
+   */
+  set source(BitmapDrawable value) {
 
-                        if (matrix)
-                                this.matrix = matrix;
+    _sourceObject = value;
 
-                        this.colorTransform = colorTransform;
-                        this.repeat = repeat;
-                        this.smooth = smooth;
-                }
+    if (value is BitmapData) {
+      _bitmapData = value;
+    } else if (value is Bitmap) {
+      _bitmapData = value.bitmapData;
+    } else if (value is DisplayObject) {
+      var bounds = (value as DisplayObject).getBounds(value).align();
+      _bitmapData = new BitmapData(bounds.right, bounds.bottom, true, 0);
+      _bitmapData.draw(value);
+    } else {
+      throw new ArgumentError();
+    }
 
-                ///////////////////////////////////////////////////////////
-                //      SOURCE
-                ///////////////////////////////////////////////////////////
+    if (_cTransform != null) {
+      var rect = new Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
+      _bitmapData.colorTransform(rect, _cTransform);
+    }
+  }
 
-                private var bitmapData:BitmapData;
-                private var sourceObject:Object;
+  ///////////////////////////////////////////////////////////
+  //      ORIENTATION
+  ///////////////////////////////////////////////////////////
 
-                /**
-                 * @private
-                 */
-                public function get source ():Object
-                {
-                        return sourceObject;
-                }
+  dynamic _orientation = null;
+  Matrix _orientationMatrix = null;
 
-                /**
-                 * The source object for the bitmap fill.
-                 */
-                public function set source (value:Object):void
-                {
-                        sourceObject = value;
+  dynamic get orientation => _orientation;
 
-                        if (bitmapData)
-                        {
-                                bitmapData.dispose();
-                                bitmapData = null;
-                        }
+  /**
+    * The planar orientation of fill relative to an isometric face.  This can either be a string value enumerated in the IsoOrientation or a matrix.
+    */
+  set orientation (dynamic value) {
 
-                        var tempSprite:DisplayObject;
+    _orientation = value;
+    if (value == null) return;
 
-                        if (value is BitmapData)
-                        {
-                                bitmapData = BitmapData(value);
-                                return;
-                        }
+    if (value is String) {
+      if (value == IsoOrientation.XY || value == IsoOrientation.XZ || value == IsoOrientation.YZ) {
+        _orientationMatrix = IsoDrawingUtil.getIsoMatrix(value as String);
+      } else {
+        _orientationMatrix = null;
+      }
+    } else if (value is Matrix) {
+      _orientationMatrix = value;
+    } else {
+      throw new ArgumentError("value is not of type String or Matrix");
+    }
+  }
 
-                        if (value is Class)
-                        {
-                                var classInstance:Class = Class(value);
-                                if (getQualifiedSuperclassName(classInstance) == "flash.display::BitmapData")
-                                {
-                                        bitmapData = new classInstance(1, 1);
-                                        return;
-                                }
+  ///////////////////////////////////////////////////////////
+  //      props
+  ///////////////////////////////////////////////////////////
 
-                                else
-                                        tempSprite = new classInstance();
-                        }
+  ColorTransform _cTransform = null;
 
-                        else if (value is Bitmap)
-                                bitmapData = Bitmap(value).bitmapData;
+  ColorTransform get colorTransform => _cTransform;
 
-                        else if (value is DisplayObject)
-                                tempSprite = DisplayObject(value);
+  /**
+   * A color transformation applied to the source object.
+   */
+  set colorTransform (ColorTransform value) {
+    _cTransform = value;
 
-                        else if (value is String)
-                        {
-                                classInstance = Class(getDefinitionByName(String(value)));
-                                if (classInstance)
-                                        tempSprite = new classInstance();
-                        }
+    if (_bitmapData != null && _cTransform != null) {
+      var rect = new Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
+      _bitmapData.colorTransform(rect, _cTransform);
+    }
+  }
 
-                        else
-                                return;
+  Matrix _matrixObject;
 
-                        if (!bitmapData && tempSprite)
-                        {
-                                if (tempSprite.width > 0 && tempSprite.height > 0)
-                                {
-                                        bitmapData = new BitmapData(tempSprite.width, tempSprite.height);
-                                        bitmapData.draw(tempSprite, new Matrix(), cTransform);
-                                }
-                        }
+  /**
+   * The transformation matrix applied to the source relative to the isometric face.  This matrix is applied before the orientation adjustments.
+   */
+  Matrix get matrix => _matrixObject;
 
-                        if (cTransform)
-                                bitmapData.colorTransform(bitmapData.rect, cTransform);
-                }
+  set matrix (Matrix value) {
+    _matrixObject = value;
+  }
 
-                ///////////////////////////////////////////////////////////
-                //      ORIENTATION
-                ///////////////////////////////////////////////////////////
+  bool _bRepeat;
 
-                private var _orientation:Object;
+  /**
+   * A flag indicating whether the bitmap is repeated to fill the area.
+   */
+  bool get repeat => _bRepeat;
 
-                /**
-                 * @private
-                 */
-                public function get orientation ():Object
-                {
-                        return _orientation;
-                }
+  set repeat (bool value) {
+    _bRepeat = value;
+  }
 
-                private var _orientationMatrix:Matrix;
 
-                /**
-                 * The planar orientation of fill relative to an isometric face.  This can either be a string value enumerated in the IsoOrientation or a matrix.
-                 */
-                public function set orientation (value:Object):void
-                {
-                        _orientation = value;
+  ///////////////////////////////////////////////////////////
+  //      IFILL
+  ///////////////////////////////////////////////////////////
 
-                        if (!value)
-                                return;
+  var _beginFillBitmapData;
+  var _beginFillMatrix;
+  var _beginFillRepeat;
 
-                        if (value is String)
-                        {
-                                if (value == IsoOrientation.XY || value == IsoOrientation.XZ || value == IsoOrientation.YZ)
-                                        _orientationMatrix = IsoDrawingUtil.getIsoMatrix(value as String);
+  void begin (Graphics target) {
 
-                                else
-                                        _orientationMatrix = null;
-                        }
+    var m = new Matrix.fromIdentity();
 
-                        else if (value is Matrix)
-                                _orientationMatrix = Matrix(value);
+    if (_orientationMatrix != null) {
+      m.concat(_orientationMatrix);
+    }
 
-                        else
-                                throw new Error("value is not of type String or Matrix");
-                }
+    if (matrix != null) {
+      m.concat(matrix);
+    }
 
-                ///////////////////////////////////////////////////////////
-                //      props
-                ///////////////////////////////////////////////////////////
+    _beginFillBitmapData = _bitmapData;
+    _beginFillMatrix = m;
+    _beginFillRepeat = repeat;
+  }
 
-                private var cTransform:ColorTransform;
+  void end (Graphics target) {
 
-                /**
-                 * @private
-                 */
-                public function get colorTransform ():ColorTransform
-                {
-                        return cTransform;
-                }
+    var pattern = _beginFillRepeat
+        ? new GraphicsPattern.repeat(_beginFillBitmapData, _beginFillMatrix)
+        : new GraphicsPattern.noRepeat(_beginFillBitmapData, _beginFillMatrix);
 
-                /**
-                 * A color transformation applied to the source object.
-                 */
-                public function set colorTransform (value:ColorTransform):void
-                {
-                        cTransform = value;
+    target.fillPattern(pattern);
+  }
 
-                        if (bitmapData && cTransform)
-                                bitmapData.colorTransform(bitmapData.rect, cTransform);
-                }
+  FillBase clone () {
+    return new BitmapFill(source, orientation, matrix, colorTransform, repeat);
+  }
 
-                private var matrixObject:Matrix;
-
-                /**
-                 * The transformation matrix applied to the source relative to the isometric face.  This matrix is applied before the orientation adjustments.
-                 */
-                public function get matrix ():Matrix
-                {
-                        return matrixObject;
-                }
-
-                /**
-                 * @private
-                 */
-                public function set matrix (value:Matrix):void
-                {
-                        matrixObject = value;
-                }
-
-                private var bRepeat:Boolean;
-
-                /**
-                 * A flag indicating whether the bitmap is repeated to fill the area.
-                 */
-                public function get repeat ():Boolean
-                {
-                        return bRepeat;
-                }
-
-                /**
-                 * @private
-                 */
-                public function set repeat (value:Boolean):void
-                {
-                        bRepeat = value;
-                }
-
-                /**
-                 * A flag indicating whether to smooth the bitmap data when filling with it.
-                 */
-                public var smooth:Boolean;
-
-                ///////////////////////////////////////////////////////////
-                //      IFILL
-                ///////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                public function begin (target:Graphics):void
-                {
-                        var m:Matrix = new Matrix();
-                        if (_orientationMatrix)
-                                m.concat(_orientationMatrix);
-
-                        if (matrix)
-                                m.concat(matrix);
-
-                        target.beginBitmapFill(bitmapData, m, repeat, smooth);
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function end (target:Graphics):void
-                {
-                        target.endFill();
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function clone ():IFill
-                {
-                        return new BitmapFill(source, orientation, matrix, colorTransform, repeat, smooth);
-                }
-        }
 }

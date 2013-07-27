@@ -1,397 +1,265 @@
-/*
-
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
-
-http://code.google.com/p/as3isolib/
-
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-*/
-package as3isolib.display.scene
-{
-
-        import as3isolib.bounds.IBounds;
-        import as3isolib.bounds.SceneBounds;
-        import as3isolib.core.IIsoDisplayObject;
-        import as3isolib.core.IsoContainer;
-        import as3isolib.core.as3isolib_internal;
-        import as3isolib.data.INode;
-        import as3isolib.display.renderers.DefaultSceneLayoutRenderer;
-        import as3isolib.display.renderers.ISceneLayoutRenderer;
-        import as3isolib.display.renderers.ISceneRenderer;
-        import as3isolib.events.IsoEvent;
-
-        import flash.display.DisplayObjectContainer;
-
-        import mx.core.ClassFactory;
-        import mx.core.IFactory;
-
-        use namespace as3isolib_internal;
-
-        /**
-         * IsoScene is a base class for grouping and rendering IIsoDisplayObject children according to their isometric position-based depth.
-         */
-        public class IsoScene extends IsoContainer implements IIsoScene
-        {
-                ///////////////////////////////////////////////////////////////////////////////
-                //      BOUNDS
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * @private
-                 */
-                private var _isoBounds:IBounds;
-
-                /**
-                 * @inheritDoc
-                 */
-                public function get isoBounds ():IBounds
-                {
-                        /* if (!_isoBounds || isInvalidated)
-                                _isoBounds =  */
-
-                        return new SceneBounds(this);
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      HOST CONTAINER
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * @private
-                 */
-                protected var host:DisplayObjectContainer;
-
-                as3isolib_internal
-
-                /**
-                 * @private
-                 */
-                public function get hostContainer ():DisplayObjectContainer
-                {
-                        return host;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function set hostContainer (value:DisplayObjectContainer):void
-                {
-                        if (value && host != value)
-                        {
-                                if (host && host.contains(container))
-                                {
-                                        host.removeChild(container);
-                                        ownerObject = null;
-                                }
-
-                                else if (hasParent)
-                                        parent.removeChild(this);
-
-                                host = value;
-                                if (host)
-                                {
-                                        host.addChild(container);
-                                        ownerObject = host;
-                                        parentNode = null;
-                                }
-                        }
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      INVALIDATE CHILDREN
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * @private
-                 *
-                 * Array of invalidated children.  Each child dispatches an IsoEvent.INVALIDATION event which notifies
-                 * the scene that that particular child is invalidated and subsequentally the scene is also invalidated.
-                 */
-                protected var invalidatedChildrenArray:Array = [];
-
-                /**
-                 * @inheritDoc
-                 */
-                public function get invalidatedChildren ():Array
-                {
-                        return invalidatedChildrenArray;
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      OVERRIDES
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function addChildAt (child:INode, index:uint):void
-                {
-                        if (child is IIsoDisplayObject)
-                        {
-                                super.addChildAt(child, index);
-                                child.addEventListener(IsoEvent.INVALIDATE, child_invalidateHandler);
-
-                                bIsInvalidated = true; //since the child most likely had fired an invalidation event prior to being added, manually invalidate the scene
-                        }
-
-                        else
-                                throw new Error ("parameter child is not of type IIsoDisplayObject");
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function setChildIndex (child:INode, index:uint):void
-                {
-                        super.setChildIndex(child, index);
-                        bIsInvalidated = true;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function removeChildByID (id:String):INode
-                {
-                        var child:INode = super.removeChildByID(id);
-                        if (child)
-                        {
-                                child.removeEventListener(IsoEvent.INVALIDATE, child_invalidateHandler);
-                                bIsInvalidated = true;
-                        }
-
-                        return child;
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override public function removeAllChildren ():void
-                {
-                        var child:INode
-                        for each (child in children)
-                                child.removeEventListener(IsoEvent.INVALIDATE, child_invalidateHandler);
-
-                        super.removeAllChildren();
-                        bIsInvalidated = true;
-                }
-
-                /**
-                 * Renders the scene as invalidated if a child object is invalidated.
-                 *
-                 * @param evt The IsoEvent dispatched from the invalidated child.
-                 */
-                protected function child_invalidateHandler (evt:IsoEvent):void
-                {
-                        var child:Object = evt.target;
-                        if (invalidatedChildrenArray.indexOf(child) == -1)
-                                invalidatedChildrenArray.push(child);
-
-                        bIsInvalidated = true;
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      LAYOUT RENDERER
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * Flags the scene for possible layout rendering.
-                 * If false, child objects are sorted by the order they were added rather than by their isometric depth.
-                 */
-                public var layoutEnabled:Boolean = true;
-
-                private var bLayoutIsFactory:Boolean = true;//flag telling us whether we decided to persist an ISceneLayoutRenderer or using a Factory each time.
-                private var layoutObject:Object;
-
-                /**
-                 * The object used to layout a scene's children.  This value can be either an IFactory or ISceneLayoutRenderer.
-                 * If the value is an IFactory, then a renderer is created and discarded on each render pass.
-                 * If the value is an ISceneLayoutRenderer, then a renderer is created and stored.
-                 * This option infrequently rendered scenes to free up memeory by releasing the factory instance.
-                 * If this IsoScene is expected be invalidated frequently, then persisting an instance in memory might provide better performance.
-                 */
-                public function get layoutRenderer ():Object
-                {
-                        return layoutObject;
-                }
-
-                /**
-                 * @private
-                 */
-                public function set layoutRenderer (value:Object):void
-                {
-                        if (!value)
-                        {
-                                layoutObject = new ClassFactory(DefaultSceneLayoutRenderer);
-
-                                bLayoutIsFactory = true;
-                                bIsInvalidated = true;
-                        }
-
-                        if (value && layoutObject != value)
-                        {
-                                if (value is IFactory)
-                                        bLayoutIsFactory = true;
-
-                                else if (value is ISceneLayoutRenderer)
-                                        bLayoutIsFactory = false;
-
-                                else
-                                        throw new Error("value for layoutRenderer is not of type IFactory or ISceneLayoutRenderer");
-
-                                layoutObject = value;
-                                bIsInvalidated = true;
-                        }
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      STYLE RENDERERS
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * Flags the scene for possible style rendering.
-                 */
-                public var stylingEnabled:Boolean = true;
-
-                private var styleRendererFactories:Vector.<IFactory> = new Vector.<IFactory>();
-
-                /**
-                 * @private
-                 */
-                public function get styleRenderers ():Array
-                {
-                        var temp:Array = [];
-                        var factory:IFactory;
-                        for each (factory in styleRendererFactories)
-                                temp.push(factory);
-
-                        return temp;
-                }
-
-                /**
-                 * An array of IFactories whose class generators are ISceneRenderer.
-                 * If any value contained within the array is not of type IFactory, it will be ignored.
-                 */
-                public function set styleRenderers (value:Array):void
-                {
-                        if (value)
-                                styleRendererFactories = Vector.<IFactory>(value);
-
-                        else
-                                styleRendererFactories = null;
-
-                        bIsInvalidated = true;
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      INVALIDATION
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * Flags the scene as invalidated during the rendering process
-                 */
-                public function invalidateScene ():void
-                {
-                        bIsInvalidated = true;
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      RENDER
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                override protected function renderLogic (recursive:Boolean = true):void
-                {
-                        super.renderLogic(recursive); //push individual changes thru, then sort based on new visible content of each child
-
-                        if (bIsInvalidated)
-                        {
-                                //render the layout first
-                                if (layoutEnabled)
-                                {
-                                        var sceneLayoutRenderer:ISceneLayoutRenderer;
-                                        if (bLayoutIsFactory)
-                                                sceneLayoutRenderer = IFactory(layoutObject).newInstance();
-
-                                        else
-                                                sceneLayoutRenderer = ISceneLayoutRenderer(layoutObject);
-
-                                        if (sceneLayoutRenderer)
-                                                sceneLayoutRenderer.renderScene(this);
-                                }
-
-                                //fix for bug #20 - http://code.google.com/p/as3isolib/issues/detail?id=20
-                                var sceneRenderer:ISceneRenderer;
-                                var factory:IFactory
-                                if (stylingEnabled && styleRendererFactories.length > 0)
-                                {
-                                        mainContainer.graphics.clear();
-
-                                        for each (factory in styleRendererFactories)
-                                        {
-                                                sceneRenderer = factory.newInstance();
-                                                if (sceneRenderer)
-                                                        sceneRenderer.renderScene(this);
-                                        }
-                                }
-
-                                bIsInvalidated = false;
-                        }
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                override protected function postRenderLogic ():void
-                {
-                        invalidatedChildrenArray = [];
-
-                        super.postRenderLogic();
-                        //should we still call sceneRendered()?
-                        sceneRendered();
-                }
-
-                /**
-                 * This function has been deprecated.  Please refer to postRenderLogic.
-                 */
-                protected function sceneRendered ():void
-                {
-                }
-
-                ///////////////////////////////////////////////////////////////////////////////
-                //      CONSTRUCTOR
-                ///////////////////////////////////////////////////////////////////////////////
-
-                /**
-                 * Constructor
-                 */
-                public function IsoScene ()
-                {
-                        super();
-
-                        layoutObject = new ClassFactory(DefaultSceneLayoutRenderer);
-                }
+part of stagexl_isometric;
+
+/**
+ * IsoScene is a base class for grouping and rendering IIsoDisplayObject children according to their isometric position-based depth.
+ */
+ class IsoScene extends IsoContainer implements IsoSceneBase {
+
+   ///////////////////////////////////////////////////////////////////////////////
+   //      CONSTRUCTOR
+   ///////////////////////////////////////////////////////////////////////////////
+
+   /**
+    * Constructor
+    */
+   IsoScene ():super() {
+     _layoutObject = new ClassFactory(() => new DefaultSceneLayoutRenderer());
+   }
+
+   ///////////////////////////////////////////////////////////////////////////////
+  //      BOUNDS
+  ///////////////////////////////////////////////////////////////////////////////
+
+  BoundsBase _isoBounds;
+
+  BoundsBase get isoBounds {
+    /* if (!_isoBounds || isInvalidated)
+            _isoBounds =  */
+
+    return new SceneBounds(this);
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      HOST CONTAINER
+  ///////////////////////////////////////////////////////////////////////////////
+
+  DisplayObjectContainer _host; // protected
+
+  DisplayObjectContainer get hostContainer => _host;
+
+  set hostContainer(DisplayObjectContainer value) {
+
+    if (value != null && _host != value) {
+      if (_host != null && _host.contains(container)) {
+        _host.removeChild(container);
+        _ownerObject = null;
+       } else if (hasParent) {
+          parent.removeChild(this);
+       }
+
+      _host = value;
+      if (_host != null) {
+        _host.addChild(container);
+        _ownerObject = _host;
+        _parentNode = null;
+      }
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      INVALIDATE CHILDREN
+  ///////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Array of invalidated children.  Each child dispatches an IsoEvent.INVALIDATION event which notifies
+   * the scene that that particular child is invalidated and subsequentally the scene is also invalidated.
+   */
+  List _invalidatedChildrenArray = [];  // protected
+
+  List get invalidatedChildren => _invalidatedChildrenArray;
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      OVERRIDES
+  ///////////////////////////////////////////////////////////////////////////////
+
+  void addChildAt (NodeBase child, int index) {
+
+    if (child is! IsoDisplayObjectBase) {
+      throw new ArgumentError ("parameter child is not of type IIsoDisplayObject");
+    }
+
+    super.addChildAt(child, index);
+    child.addEventListener(IsoEvent.INVALIDATE, _child_invalidateHandler);
+    _bIsInvalidated = true; //since the child most likely had fired an invalidation event prior to being added, manually invalidate the scene
+  }
+
+  void setChildIndex (NodeBase child, int index) {
+    super.setChildIndex(child, index);
+    _bIsInvalidated = true;
+  }
+
+  NodeBase removeChildByID (String id) {
+
+    var child = super.removeChildByID(id);
+    if (child != null) {
+      child.removeEventListener(IsoEvent.INVALIDATE, _child_invalidateHandler);
+      _bIsInvalidated = true;
+    }
+
+    return child;
+  }
+
+  void removeAllChildren() {
+
+    for (var child in children) {
+      child.removeEventListener(IsoEvent.INVALIDATE, _child_invalidateHandler);
+    }
+
+    super.removeAllChildren();
+    _bIsInvalidated = true;
+  }
+
+  /**
+   * Renders the scene as invalidated if a child object is invalidated.
+   *
+   * @param evt The IsoEvent dispatched from the invalidated child.
+   */
+  _child_invalidateHandler (IsoEvent evt) {
+    var child = evt.target;
+
+    if (_invalidatedChildrenArray.indexOf(child) == -1) {
+        _invalidatedChildrenArray.add(child);
+    }
+
+    _bIsInvalidated = true;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      LAYOUT RENDERER
+  ///////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Flags the scene for possible layout rendering.
+   * If false, child objects are sorted by the order they were added rather than by their isometric depth.
+   */
+  bool layoutEnabled = true;
+
+  bool _bLayoutIsFactory = true; //flag telling us whether we decided to persist an ISceneLayoutRenderer or using a Factory each time.
+  dynamic _layoutObject;
+
+  /**
+   * The object used to layout a scene's children.  This value can be either an IFactory or ISceneLayoutRenderer.
+   * If the value is an IFactory, then a renderer is created and discarded on each render pass.
+   * If the value is an ISceneLayoutRenderer, then a renderer is created and stored.
+   * This option infrequently rendered scenes to free up memeory by releasing the factory instance.
+   * If this IsoScene is expected be invalidated frequently, then persisting an instance in memory might provide better performance.
+   */
+  dynamic get layoutRenderer => _layoutObject;
+
+  void _layoutRenderer (dynamic value) {
+
+    if (value == null) {
+      _layoutObject = new ClassFactory(() => new DefaultSceneLayoutRenderer());
+      _bLayoutIsFactory = true;
+      _bIsInvalidated = true;
+    }
+
+    if (value != null && _layoutObject != value) {
+      if (value is FactoryBase) {
+        _bLayoutIsFactory = true;
+      } else  if (value is SceneLayoutRendererBase) {
+        _bLayoutIsFactory = false;
+      } else {
+        throw new ArgumentError("value for layoutRenderer is not of type IFactory or ISceneLayoutRenderer");
+      }
+
+      _layoutObject = value;
+      _bIsInvalidated = true;
+    }
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      STYLE RENDERERS
+  ///////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Flags the scene for possible style rendering.
+   */
+  bool stylingEnabled = true;
+
+  List _styleRendererFactories = [];
+
+  List get styleRenderers  => new List.from(_styleRendererFactories);
+
+  /**
+   * An array of IFactories whose class generators are ISceneRenderer.
+   * If any value contained within the array is not of type IFactory, it will be ignored.
+   */
+  set styleRenderers (List value) {
+    if (value != null) {
+      _styleRendererFactories = new List.from(value);
+    } else {
+      _styleRendererFactories = null;
+    }
+
+    _bIsInvalidated = true;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      INVALIDATION
+  ///////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * Flags the scene as invalidated during the rendering process
+   */
+  void invalidateScene () {
+    _bIsInvalidated = true;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////
+  //      RENDER
+  ///////////////////////////////////////////////////////////////////////////////
+
+  /**
+   * @inheritDoc
+   */
+  void _renderLogic ([bool recursive = true]) { // protected
+
+    super._renderLogic(recursive); //push individual changes thru, then sort based on new visible content of each child
+
+    if (_bIsInvalidated) {
+
+      //render the layout first
+      if (layoutEnabled) {
+        var sceneLayoutRenderer;
+        if (_bLayoutIsFactory) {
+          sceneLayoutRenderer = (_layoutObject as FactoryBase).newInstance();
+        } else {
+          sceneLayoutRenderer = _layoutObject as SceneLayoutRendererBase;
         }
+
+        if (sceneLayoutRenderer != null) {
+          sceneLayoutRenderer.renderScene(this);
+        }
+      }
+
+      //fix for bug #20 - http://code.google.com/p/as3isolib/issues/detail?id=20
+      if (stylingEnabled && _styleRendererFactories.length > 0) {
+        _mainContainer.graphics.clear();
+        for (var factory in _styleRendererFactories) {
+          var sceneRenderer = factory.newInstance();
+          if (sceneRenderer != null) {
+            sceneRenderer.renderScene(this);
+          }
+        }
+      }
+
+      _bIsInvalidated = false;
+    }
+  }
+
+  void _postRenderLogic() { // protected
+    _invalidatedChildrenArray = [];
+
+    super._postRenderLogic();
+    // should we still call sceneRendered()?
+    _sceneRendered();
+  }
+
+  /**
+   * This function has been deprecated.  Please refer to postRenderLogic.
+   */
+  void _sceneRendered () { // protected
+  }
+
 }

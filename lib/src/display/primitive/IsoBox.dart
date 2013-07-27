@@ -1,250 +1,178 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+/**
+ * 3D box primitive in isometric space.
+ */
+ class IsoBox extends IsoPrimitive {
 
-http://code.google.com/p/as3isolib/
+   /**
+   * Constructor
+   */
+  IsoBox ([Map descriptor = null]):super(descriptor);
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  set stroke (StrokeBase value) {
+    strokes = [value, value, value, value, value, value];
+  }
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  bool _validateGeometry() { // protected
+    return (width <= 0 && length <= 0 && height <= 0) ? false : true;
+  }
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  _drawGeometry () { // protected
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    Graphics  g = _mainContainer.graphics;
+    g.clear();
 
-*/
-package as3isolib.display.primitive
-{
-        import as3isolib.enum.RenderStyleType;
-        import as3isolib.geom.IsoMath;
-        import as3isolib.geom.Pt;
-        import as3isolib.graphics.IBitmapFill;
-        import as3isolib.graphics.IFill;
-        import as3isolib.graphics.IStroke;
+    //all pts are named in following order "x", "y", "z" via rfb = right, front, bottom
+    var lbb = IsoMath.isoToScreen(new Pt(0, 0, 0));
+    var rbb = IsoMath.isoToScreen(new Pt(width, 0, 0));
+    var rfb = IsoMath.isoToScreen(new Pt(width, length, 0));
+    var lfb = IsoMath.isoToScreen(new Pt(0, length, 0));
 
-        import flash.display.Graphics;
-        import flash.geom.Matrix;
+    var lbt = IsoMath.isoToScreen(new Pt(0, 0, height));
+    var rbt = IsoMath.isoToScreen(new Pt(width, 0, height));
+    var rft = IsoMath.isoToScreen(new Pt(width, length, height));
+    var lft = IsoMath.isoToScreen(new Pt(0, length, height));
 
-        /**
-         * 3D box primitive in isometric space.
-         */
-        public class IsoBox extends IsoPrimitive
-        {
-                /**
-                 * Constructor
-                 */
-                public function IsoBox (descriptor:Object = null)
-                {
-                        super(descriptor);
-                }
+    var fill;
+    var stroke;
 
-                override public function set stroke (value:IStroke):void
-                {
-                        strokes = [value, value, value, value, value, value];
-                }
+    //bottom face
 
-                /**
-                 * @inheritDoc
-                 */
-                override protected function validateGeometry ():Boolean
-                {
-                        return (width <= 0 && length <= 0 && height <= 0) ? false : true;
-                }
+    fill = fills.length >= 6 ? fills[5] : IsoPrimitive.DEFAULT_FILL;
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
-                /**
-                 * @inheritDoc
-                 */
-                override protected function drawGeometry ():void
-                {
-                        var g:Graphics = mainContainer.graphics;
-                        g.clear();
+    stroke = strokes.length >= 6 ? strokes[5] : IsoPrimitive.DEFAULT_STROKE;
 
-                        //all pts are named in following order "x", "y", "z" via rfb = right, front, bottom
-                        var lbb:Pt = IsoMath.isoToScreen(new Pt(0, 0, 0));
-                        var rbb:Pt = IsoMath.isoToScreen(new Pt(width, 0, 0));
-                        var rfb:Pt = IsoMath.isoToScreen(new Pt(width, length, 0));
-                        var lfb:Pt = IsoMath.isoToScreen(new Pt(0, length, 0));
+    g.beginPath();
+    g.moveTo(lbb.x, lbb.y);
+    g.lineTo(rbb.x, rbb.y);
+    g.lineTo(rfb.x, rfb.y);
+    g.lineTo(lfb.x, lfb.y);
+    g.lineTo(lbb.x, lbb.y);
 
-                        var lbt:Pt = IsoMath.isoToScreen(new Pt(0, 0, height));
-                        var rbt:Pt = IsoMath.isoToScreen(new Pt(width, 0, height));
-                        var rft:Pt = IsoMath.isoToScreen(new Pt(width, length, height));
-                        var lft:Pt = IsoMath.isoToScreen(new Pt(0, length, height));
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
 
-                        //bottom face
-                        g.moveTo(lbb.x, lbb.y);
-                        var fill:IFill = fills.length >= 6 ? IFill(fills[5]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                                fill.begin(g);
+    //back-left face
 
-                        var stroke:IStroke = strokes.length >= 6 ? IStroke(strokes[5]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
+    fill = fills.length >= 5 ? fills[4] : IsoPrimitive.DEFAULT_FILL;
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
-                        g.lineTo(rbb.x, rbb.y);
-                        g.lineTo(rfb.x, rfb.y);
-                        g.lineTo(lfb.x, lfb.y);
-                        g.lineTo(lbb.x, lbb.y);
+    stroke = strokes.length >= 5 ? strokes[4] : IsoPrimitive.DEFAULT_STROKE;
 
-                        if (fill)
-                                fill.end(g);
+    g.beginPath();
+    g.moveTo(lbb.x, lbb.y);
+    g.lineTo(lfb.x, lfb.y);
+    g.lineTo(lft.x, lft.y);
+    g.lineTo(lbt.x, lbt.y);
+    g.lineTo(lbb.x, lbb.y);
 
-                        //back-left face
-                        g.moveTo(lbb.x, lbb.y);
-                        fill = fills.length >= 5 ? IFill(fills[4]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                                fill.begin(g);
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
 
-                        stroke = strokes.length >= 5 ? IStroke(strokes[4]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
+    //back-right face
 
-                        g.lineTo(lfb.x, lfb.y);
-                        g.lineTo(lft.x, lft.y);
-                        g.lineTo(lbt.x, lbt.y);
-                        g.lineTo(lbb.x, lbb.y);
+    fill = fills.length >= 4 ? fills[3] : IsoPrimitive.DEFAULT_FILL;
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
-                        if (fill)
-                                fill.end(g);
+    stroke = strokes.length >= 4 ? strokes[3] : IsoPrimitive.DEFAULT_STROKE;
 
-                        //back-right face
-                        g.moveTo(lbb.x, lbb.y);
-                        fill = fills.length >= 4 ? IFill(fills[3]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                                fill.begin(g);
+    g.beginPath();
+    g.moveTo(lbb.x, lbb.y);
+    g.lineTo(rbb.x, rbb.y);
+    g.lineTo(rbt.x, rbt.y);
+    g.lineTo(lbt.x, lbt.y);
+    g.lineTo(lbb.x, lbb.y);
 
-                        stroke = strokes.length >= 4 ? IStroke(strokes[3]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
 
-                        g.lineTo(rbb.x, rbb.y);
-                        g.lineTo(rbt.x, rbt.y);
-                        g.lineTo(lbt.x, lbt.y);
-                        g.lineTo(lbb.x, lbb.y);
+    //front-left face
+    fill = fills.length >= 3 ? fills[2] : IsoPrimitive.DEFAULT_FILL;
 
-                        if (fill)
-                                fill.end(g);
-
-                        //front-left face
-                        g.moveTo(lfb.x, lfb.y);
-                        fill = fills.length >= 3 ? IFill(fills[2]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                        {
-                                if (fill is IBitmapFill)
-                                {
-                                        var m:Matrix = IBitmapFill(fill).matrix ? IBitmapFill(fill).matrix : new Matrix();
-                                        m.tx += lfb.x;
-                                        m.ty += lfb.y;
-
-                                        if (!IBitmapFill(fill).repeat)
-                                        {
-                                                //calculate how to stretch fill for face
-                                                //this is not great OOP, sorry folks!
-
-
-                                        }
-
-                                        IBitmapFill(fill).matrix = m;
-                                }
-
-                                fill.begin(g);
-                        }
-
-                        stroke = strokes.length >= 3 ? IStroke(strokes[2]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
-
-                        g.lineTo(lft.x, lft.y);
-                        g.lineTo(rft.x, rft.y);
-                        g.lineTo(rfb.x, rfb.y);
-                        g.lineTo(lfb.x, lfb.y);
-
-                        if (fill)
-                                fill.end(g);
-
-                        //front-right face
-                        g.moveTo(rbb.x, rbb.y);
-                        fill = fills.length >= 2 ? IFill(fills[1]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                        {
-                                if (fill is IBitmapFill)
-                                {
-                                        m = IBitmapFill(fill).matrix ? IBitmapFill(fill).matrix : new Matrix();
-                                        m.tx += lfb.x;
-                                        m.ty += lfb.y;
-
-                                        if (!IBitmapFill(fill).repeat)
-                                        {
-                                                //calculate how to stretch fill for face
-                                                //this is not great OOP, sorry folks!
-
-
-                                        }
-
-                                        IBitmapFill(fill).matrix = m;
-                                }
-
-                                fill.begin(g);
-                        }
-
-                        stroke = strokes.length >= 2 ? IStroke(strokes[1]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
-
-                        g.lineTo(rfb.x, rfb.y);
-                        g.lineTo(rft.x, rft.y);
-                        g.lineTo(rbt.x, rbt.y);
-                        g.lineTo(rbb.x, rbb.y);
-
-                        if (fill)
-                                fill.end(g);
-
-                        //top face
-                        g.moveTo(lbt.x, lbt.y);
-                        fill = fills.length >= 1 ? IFill(fills[0]) : DEFAULT_FILL;
-                        if (fill && styleType != RenderStyleType.WIREFRAME)
-                        {
-                                if (fill is IBitmapFill)
-                                {
-                                        m = IBitmapFill(fill).matrix ? IBitmapFill(fill).matrix : new Matrix();
-                                        m.tx += lbt.x;
-                                        m.ty += lbt.y;
-
-                                        if (!IBitmapFill(fill).repeat)
-                                        {
-
-                                        }
-
-                                        IBitmapFill(fill).matrix = m;
-                                }
-
-                                fill.begin(g);
-                        }
-
-                        stroke = strokes.length >= 1 ? IStroke(strokes[0]) : DEFAULT_STROKE;
-                        if (stroke)
-                                stroke.apply(g);
-
-                        g.lineTo(rbt.x, rbt.y);
-                        g.lineTo(rft.x, rft.y);
-                        g.lineTo(lft.x, lft.y);
-                        g.lineTo(lbt.x, lbt.y);
-
-                        if (fill)
-                                fill.end(g);
-                }
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) {
+      if (fill is BitmapFillBase) {
+        var m = (fill as BitmapFillBase).matrix;
+        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        m.translate(lfb.x, lfb.y);
+        if ((fill as BitmapFillBase).repeat == false) {
+          //calculate how to stretch fill for face
+          //this is not great OOP, sorry folks!
         }
+        (fill as BitmapFillBase).matrix = m;
+      }
+
+      fill.begin(g);
+    }
+
+    stroke = strokes.length >= 3 ? strokes[2] : IsoPrimitive.DEFAULT_STROKE;
+
+    g.beginPath();
+    g.moveTo(lfb.x, lfb.y);
+    g.lineTo(lft.x, lft.y);
+    g.lineTo(rft.x, rft.y);
+    g.lineTo(rfb.x, rfb.y);
+    g.lineTo(lfb.x, lfb.y);
+
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
+
+    //front-right face
+    fill = fills.length >= 2 ? fills[1] : IsoPrimitive.DEFAULT_FILL;
+
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) {
+      if (fill is BitmapFillBase) {
+        var m = (fill as BitmapFillBase).matrix;
+        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        m.translate(lfb.x, lfb.y);
+        if ((fill as BitmapFillBase).repeat == false) {
+          //calculate how to stretch fill for face
+          //this is not great OOP, sorry folks!
+        }
+        (fill as BitmapFillBase).matrix = m;
+      }
+      fill.begin(g);
+    }
+
+    stroke = strokes.length >= 2 ? strokes[1] : IsoPrimitive.DEFAULT_STROKE;
+
+    g.beginPath();
+    g.moveTo(rbb.x, rbb.y);
+    g.lineTo(rfb.x, rfb.y);
+    g.lineTo(rft.x, rft.y);
+    g.lineTo(rbt.x, rbt.y);
+    g.lineTo(rbb.x, rbb.y);
+
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
+
+    //top face
+
+    fill = fills.length >= 1 ? fills[0] : IsoPrimitive.DEFAULT_FILL;
+
+    if (fill != null && styleType != RenderStyleType.WIREFRAME) {
+      if (fill is BitmapFillBase) {
+        var m = (fill as BitmapFillBase).matrix;
+        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        m.translate(lbt.x, lbt.y);
+        if ((fill as BitmapFillBase).repeat == false) {
+        }
+        (fill as BitmapFillBase).matrix = m;
+      }
+      fill.begin(g);
+    }
+
+    stroke = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
+
+    g.beginPath();
+    g.moveTo(lbt.x, lbt.y);
+    g.lineTo(rbt.x, rbt.y);
+    g.lineTo(rft.x, rft.y);
+    g.lineTo(lft.x, lft.y);
+    g.lineTo(lbt.x, lbt.y);
+
+    if (fill != null) fill.end(g);
+    if (stroke != null) stroke.apply(g);
+  }
 }

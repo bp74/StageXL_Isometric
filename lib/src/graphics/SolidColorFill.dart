@@ -1,117 +1,58 @@
-/*
+part of stagexl_isometric;
 
-as3isolib - An open-source ActionScript 3.0 Isometric Library developed to assist
-in creating isometrically projected content (such as games and graphics)
-targeted for the Flash player platform
+class SolidColorFill implements FillBase {
 
-http://code.google.com/p/as3isolib/
+  ////////////////////////////////////////////////////////////////////////
+  //      ID
+  ////////////////////////////////////////////////////////////////////////
 
-Copyright (c) 2006 - 3000 J.W.Opitz, All Rights Reserved.
+  static int _IDCount = 0;
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
+  final int UID = _IDCount++;
+  String _setID = null; // protected
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  String get id => (_setID == null || _setID == "") ? "SolidColorFill$UID" : _setID;
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  set id (String value) {
+    _setID = value;
+  }
 
-*/
-package as3isolib.graphics
-{
-        import flash.display.Graphics;
+  /**
+   * Constructor
+   */
+  SolidColorFill (int color, num alpha) {
+    this.color = color;
+    this.alpha = alpha;
+  }
 
-        public class SolidColorFill implements IFill
-        {
-                ////////////////////////////////////////////////////////////////////////
-                //      ID
-                ////////////////////////////////////////////////////////////////////////
+  /**
+   * The fill color.
+   */
+  int color;
 
-                static private var _IDCount:uint = 0;
+  /**
+   * The transparency of the fill.
+   */
+  num alpha;
 
-                /**
-                 * @private
-                 */
-                public const UID:uint = _IDCount++;
+  ///////////////////////////////////////////////////////////
+  //      IFILL
+  ///////////////////////////////////////////////////////////
 
-                /**
-                 * @private
-                 */
-                protected var setID:String;
+  var _beginFillColor;
+  var _beginFillAlpha;
 
-                /**
-                 * @private
-                 */
-                public function get id ():String
-                {
-                        return (setID == null || setID == "")?
-                                "SolidColorFill" + UID.toString():
-                                setID;
-                }
+  void begin (Graphics target) {
+    _beginFillColor = color;
+    _beginFillAlpha = alpha;
+  }
 
-                /**
-                 * @inheritDoc
-                 */
-                public function set id (value:String):void
-                {
-                        setID = value;
-                }
+  void end(Graphics target ) {
+    // ToDo: _beginFillAlpha
+    target.fillColor(_beginFillColor);
+  }
 
-                /**
-                 * Constructor
-                 */
-                public function SolidColorFill (color:uint, alpha:Number)
-                {
-                        this.color = color;
-                        this.alpha = alpha;
-                }
-
-                /**
-                 * The fill color.
-                 */
-                public var color:uint;
-
-                /**
-                 * The transparency of the fill.
-                 */
-                public var alpha:Number;
-
-                ///////////////////////////////////////////////////////////
-                //      IFILL
-                ///////////////////////////////////////////////////////////
-
-                /**
-                 * @inheritDoc
-                 */
-                public function begin (target:Graphics):void
-                {
-                        target.beginFill(color, alpha);
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function end (target:Graphics):void
-                {
-                        target.endFill();
-                }
-
-                /**
-                 * @inheritDoc
-                 */
-                public function clone ():IFill
-                {
-                        return new SolidColorFill(color, alpha);
-                }
-        }
+  FillBase clone() {
+    return new SolidColorFill(color, alpha);
+  }
 }
