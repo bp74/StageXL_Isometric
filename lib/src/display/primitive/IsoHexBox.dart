@@ -9,7 +9,7 @@ class IsoHexBox extends IsoPrimitive {
   //      CONSTRUCTOR
   //////////////////////////////////////////////////
 
-  IsoHexBox (Map descriptor) : super(descriptor);
+  IsoHexBox ([Map descriptor = null]) : super(descriptor);
 
   //////////////////////////////////////////////////
   //      SIZE
@@ -63,14 +63,11 @@ class IsoHexBox extends IsoPrimitive {
     Graphics  g = _mainContainer.graphics;
     g.clear();
 
-    StrokeBase s = strokes.length >= 8 ? strokes[7] : DEFAULT_STROKE;
-    if (s != null) s.apply(g);
-
-    FillBase f = fills.length >= 8 ? fills[7] : DEFAULT_FILL;
+    var s = strokes.length >= 8 ? strokes[7] : IsoPrimitive.DEFAULT_STROKE;
+    var f = fills.length >= 8 ? fills[7] : IsoPrimitive.DEFAULT_FILL;
 
     if (f != null) {
-      if (f is BitmapFill)
-        (f as BitmapFill).orientation = IsoOrientation.XY;
+      if (f is BitmapFill) f.orientation = IsoOrientation.XY;
       f.begin(g);
     }
 
@@ -82,20 +79,16 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptb5.x, ptb5.y);
     g.lineTo(ptb0.x, ptb0.y);
 
-    s = null;
-
     if (f != null) f.end(g);
+    if (s != null) s.apply(g);
 
     //draw side faces, orienting fills to face planes
     //face #4
-    s = strokes.length >= 5 ? strokes[4] : DEFAULT_STROKE;
-    if (s != null) s.apply(g);
+    s = strokes.length >= 5 ? strokes[4] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 5 ? fills[4] : IsoPrimitive.DEFAULT_FILL;
 
-    f = fills.length >= 5 ? fills[4] : DEFAULT_FILL;
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = new Matrix(1, tan(Pt.theta(ptb4, ptb5)), 0, 1, 0, 0);;
-      }
+      if (f is BitmapFill)  f.orientation = new Matrix(1, tan(Pt.theta(ptb4, ptb5)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -105,19 +98,15 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt4.x, ptt4.y);
     g.lineTo(ptb4.x, ptb4.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //face #5
-    s = strokes.length >= 6 ? strokes[5] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 6 ? fills[5] : DEFAULT_FILL;
+    //face #5
+    s = strokes.length >= 6 ? strokes[5] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 6 ? fills[5] : IsoPrimitive.DEFAULT_FILL;
+
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = new Matrix(1, tan(Pt.theta(ptb5, ptb0)), 0, 1, 0, 0);;
-      }
+      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb5, ptb0)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -127,21 +116,15 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt0.x, ptt0.y);
     g.lineTo(ptb0.x, ptb0.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //face #6
-    s = strokes.length >= 7 ? strokes[6] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 7 ? fills[6] : DEFAULT_FILL;
+    //face #6
+    s = strokes.length >= 7 ? strokes[6] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 7 ? fills[6] : IsoPrimitive.DEFAULT_FILL;
+
     if (f != null) {
-      f.end(g);
-
-      if (f is BitmapFill)
-        (f as BitmapFill).orientation = IsoOrientation.XZ;
-
+      if (f is BitmapFill) f.orientation = IsoOrientation.XZ;
       f.begin(g);
     }
 
@@ -151,19 +134,15 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt0.x, ptt0.y);
     g.lineTo(ptb0.x, ptb0.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //face #1
-    s = strokes.length >= 2 ? strokes[1] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 2 ? fills[1] : DEFAULT_FILL;
+    //face #1
+    s = strokes.length >= 2 ? strokes[1] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 2 ? fills[1] : IsoPrimitive.DEFAULT_FILL;
+
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = new Matrix(1, tan(Pt.theta(ptb2, ptb1)), 0, 1, 0, 0);;
-      }
+      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb2, ptb1)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -173,20 +152,16 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt1.x, ptt1.y);
     g.lineTo(ptb1.x, ptb1.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //face #2
-    s = strokes.length >= 3 ? strokes[2] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 3 ? fills[2] : DEFAULT_FILL;
-    f = fills[2];
+    //face #2
+    s = strokes.length >= 3 ? strokes[2] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 3 ? fills[2] : IsoPrimitive.DEFAULT_FILL;
+    //f = fills[2];
+
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = new Matrix(1, tan(Pt.theta(ptb3, ptb2)), 0, 1, 0, 0);;
-      }
+      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb3, ptb2)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -196,19 +171,15 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt2.x, ptt2.y);
     g.lineTo(ptb2.x, ptb2.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //face #3
-    s = strokes.length >= 4 ? strokes[3] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 4 ? fills[3] : DEFAULT_FILL;
+    //face #3
+    s = strokes.length >= 4 ? strokes[3] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 4 ? fills[3] : IsoPrimitive.DEFAULT_FILL;
+
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = IsoOrientation.XZ;
-      }
+      if (f is BitmapFill) f.orientation = IsoOrientation.XZ;
       f.begin(g);
     }
 
@@ -218,19 +189,15 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt3.x, ptt3.y);
     g.lineTo(ptb3.x, ptb3.y);
 
-    s = null;
-
     if (f != null) f.end(g);
-
-    //top hex
-    s = strokes.length >= 1 ? strokes[0] : DEFAULT_STROKE;
     if (s != null) s.apply(g);
 
-    f = fills.length >= 1 ? fills[0] : DEFAULT_FILL;
+    //top hex
+    s = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
+    f = fills.length >= 1 ? fills[0] : IsoPrimitive.DEFAULT_FILL;
+
     if (f != null) {
-      if (f is BitmapFill) {
-        (f as BitmapFill).orientation = IsoOrientation.XY;
-      }
+      if (f is BitmapFill) f.orientation = IsoOrientation.XY;
       f.begin(g);
     }
 
@@ -242,9 +209,8 @@ class IsoHexBox extends IsoPrimitive {
     g.lineTo(ptt5.x, ptt5.y);
     g.lineTo(ptt0.x, ptt0.y);
 
-    s = null;
-
     if (f != null) f.end(g);
+    if (s != null) s.apply(g);
   }
 
   set stroke (StrokeBase value) {

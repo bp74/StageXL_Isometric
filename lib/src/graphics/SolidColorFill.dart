@@ -49,7 +49,9 @@ class SolidColorFill implements FillBase {
 
   void end(Graphics target ) {
     // ToDo: _beginFillAlpha
-    target.fillColor(_beginFillColor);
+
+    var color = (_beginFillColor & 0xFFFFFF) | ((0xFF * alpha).toInt() << 24);
+    target.fillColor(color);
   }
 
   FillBase clone() {
