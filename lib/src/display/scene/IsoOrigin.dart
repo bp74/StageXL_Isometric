@@ -32,8 +32,8 @@ class IsoOrigin extends IsoPrimitive {
     g.clear();
 
     //draw x-axis
-    var stroke = strokes[0] as StrokeBase;
-    var fill = fills[0] as FillBase;
+    var stroke = strokes[0];
+    var fill = fills[0];
 
     pt0 = IsoMath.isoToScreen(new Pt(-1 * axisLength, 0, 0));
     pt1 = IsoMath.isoToScreen(new Pt(axisLength, 0, 0));
@@ -50,8 +50,8 @@ class IsoOrigin extends IsoPrimitive {
     stroke.apply(g);
 
     //draw y-axis
-    stroke = strokes[1] as StrokeBase;
-    fill = fills[1] as FillBase;
+    stroke = strokes[1];
+    fill = fills[1];
 
     pt0 = IsoMath.isoToScreen(new Pt(0, -1 * axisLength, 0));
     pt1 = IsoMath.isoToScreen(new Pt(0, axisLength, 0));
@@ -68,8 +68,8 @@ class IsoOrigin extends IsoPrimitive {
     stroke.apply(g);
 
     //draw z-axis
-    stroke = strokes[2] as StrokeBase;
-    fill = fills[2] as FillBase;
+    stroke = strokes[2];
+    fill = fills[2];
 
     pt0 = IsoMath.isoToScreen(new Pt(0, 0, -1 * axisLength));
     pt1 = IsoMath.isoToScreen(new Pt(0, 0, axisLength));

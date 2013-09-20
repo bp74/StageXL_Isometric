@@ -17,18 +17,18 @@ class IsoSprite extends IsoDisplayObject {
   //      SKINS
   ////////////////////////////////////////////////////////////
 
-  List _spritesArray = [];  // protected
+  List _spritesArray = new List();  // protected
 
   List get sprites => _spritesArray;
 
   /**
    * An array of visual assets to be attached.
-   * Elements in the array are expected be of type DisplayObject or Class (cast to a DisplayObject upon instantiation).
+   * Elements in the array are expected be of type DisplayObject or BitmapData.
    */
   set sprites(List value) {
     if (_spritesArray != value ) {
       _spritesArray = value;
-       _bSpritesInvalidated = true;
+      _bSpritesInvalidated = true;
     }
   }
 
@@ -105,10 +105,11 @@ class IsoSprite extends IsoDisplayObject {
 
   _createChildren() { // protected
 
-    super._createChildren(); //this is redundant
+    super._createChildren();
 
-    _mainContainer = new MovieClip();
-    _attachMainContainerEventListeners();
+    //this is redundant
+    //_mainContainer = new Sprite();
+    //_attachMainContainerEventListeners();
   }
 
 }

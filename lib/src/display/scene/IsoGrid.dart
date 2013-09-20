@@ -101,7 +101,7 @@ class IsoGrid extends IsoPrimitive {
   ////////////////////////////////////////////////////
 
   StrokeBase get gridlines {
-    return strokes[0] as StrokeBase;
+    return strokes[0];
   }
 
   set gridlines (StrokeBase value) {
@@ -135,7 +135,7 @@ class IsoGrid extends IsoPrimitive {
     Graphics g = _mainContainer.graphics;
     g.clear();
 
-    var stroke = strokes[0] as StrokeBase;
+    var stroke = strokes[0];
     var pt = new Pt();
 
     int i = 0;

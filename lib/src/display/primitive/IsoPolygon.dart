@@ -25,7 +25,7 @@ class IsoPolygon extends IsoPrimitive {
     var fill = fills[0];
     if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
-    var stroke = strokes.length >= 1 ? strokes[0] : DEFAULT_STROKE;
+    var stroke = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
     if (stroke != null) stroke.apply(g);
 
     var i = 1;

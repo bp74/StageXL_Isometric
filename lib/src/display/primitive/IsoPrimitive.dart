@@ -69,7 +69,7 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   //      MAIN FILL
   //////////////////////////////
 
-  FillBase get fill => fills[0] as FillBase;
+  FillBase get fill => fills[0];
 
   set fill (FillBase value) {
     fills = [value, value, value, value, value, value];
@@ -80,15 +80,15 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   static final FillBase DEFAULT_FILL = new SolidColorFill(0xFFFFFFFF, 1);
 
-  List _fillsArray  = new List();
+  List<FillBase> _fillsArray  = new List();
 
-  List get fills => new List.from(_fillsArray);
+  List<FillBase> get fills => new List<FillBase>.from(_fillsArray);
 
   void set fills (List value) {
     if (value != null) {
-      _fillsArray = new List.from(value);
+      _fillsArray = new List<FillBase>.from(value);
     } else {
-      _fillsArray = new List();
+      _fillsArray = new List<FillBase>();
     }
 
     invalidateStyles();
@@ -98,7 +98,7 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   //      MAIN STROKE
   //////////////////////////////
 
-  StrokeBase get stroke => strokes[0] as StrokeBase;
+  StrokeBase get stroke => strokes[0];
 
   set stroke (StrokeBase value) {
     strokes = [value, value, value, value, value, value];

@@ -9,7 +9,7 @@ class IsoHexGrid extends IsoGrid {
     Graphics g = _mainContainer.graphics;
     g.clear();
 
-    var stroke = strokes[0] as StrokeBase;
+    var stroke = strokes[0];
     if (stroke != null) stroke.apply(g);
 
     var pts = _generatePts();
