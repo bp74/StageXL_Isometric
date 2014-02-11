@@ -1,7 +1,6 @@
 library stagexl_isometric;
 
-import 'dart:math';
-import 'package:meta/meta.dart';
+import 'dart:math' hide Point, Rectangle;
 import 'package:stagexl/stagexl.dart';
 
 part 'src/bounds/BoundsBase.dart';

@@ -92,9 +92,9 @@ class Node extends EventDispatcher implements NodeBase {
 
       if (child.children.length > 0) {
         descendants.addAll(child.getDescendantNodes(includeBranches));
-        if (includeBranches) descendants.push(child);
+        if (includeBranches) descendants.add(child);
       } else {
-        descendants.push(child);
+        descendants.add(child);
       }
     }
 
@@ -199,7 +199,7 @@ class Node extends EventDispatcher implements NodeBase {
     var child = getChildByID(id);
 
     if (child != null) {
-      child.parentNode = null;
+      child._parentNode = null;
 
       for (int i = 0; i < _childrenArray.length; i++ ) {
         if (child == _childrenArray[i]) {
@@ -219,7 +219,7 @@ class Node extends EventDispatcher implements NodeBase {
   void removeAllChildren() {
 
     for(var child in _childrenArray) {
-      child.parentNode = null;
+      child._parentNode = null;
     }
 
     _childrenArray.length = 0;

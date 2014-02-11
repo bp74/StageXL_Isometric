@@ -10,7 +10,6 @@ class IsometricTransformation implements AxonometricTransformationBase {
   num _cosTheta = cos(30 * PI / 180);
   num _sinTheta = sin(30 * PI / 180);
 
-  @override
   Pt screenToSpace (Pt screenPt) {
 
     var z = screenPt.z;
@@ -20,8 +19,6 @@ class IsometricTransformation implements AxonometricTransformationBase {
     return new Pt(x, y, z);
   }
 
-
-  @override
   Pt spaceToScreen (Pt spacePt) {
 
     var z = spacePt.z;

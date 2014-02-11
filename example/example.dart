@@ -6,8 +6,8 @@ import 'package:stagexl_isometric/stagexl_isometric.dart';
 
 void main() {
 
-  var canvas = html.query('#stage');
-  var stage = new Stage('myStage', canvas);
+  var canvas = html.querySelector('#stage');
+  var stage = new Stage(canvas);
   var renderLoop = new RenderLoop();
   renderLoop.addStage(stage);
 

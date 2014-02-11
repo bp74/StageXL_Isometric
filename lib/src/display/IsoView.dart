@@ -138,7 +138,7 @@ class IsoView extends Sprite implements IsoViewBase {
 
     for (var scene in _scenesArray ) {
       if (scene.isInvalidated) {
-        a.push( scene );
+        a.add( scene );
       }
     }
 
@@ -216,7 +216,7 @@ class IsoView extends Sprite implements IsoViewBase {
         if ( dx > 0 ) {
           ndx = min(dx, rect.left.abs());
         } else {
-          ndx = -1 * min( dx.asb(), (rect.right - _romBoundsRect.right).abs());
+          ndx = -1 * min( dx.abs(), (rect.right - _romBoundsRect.right).abs());
         }
 
         if ( dy > 0 ) {
@@ -646,8 +646,8 @@ class IsoView extends Sprite implements IsoViewBase {
     g.clear();
 
     if (_showBorder) {
-      g.lineStyle(0);
-      g.drawRect( 0, 0, _w, _h );
+      g.rect( 0, 0, _w, _h );
+      g.strokeColor(Color.Black);
     }
   }
 

@@ -23,7 +23,6 @@ class DefaultIsometricTransformation implements AxonometricTransformationBase {
     _bMaintainZAxisRatio = maintainZAxisRatio;
   }
 
-  @override
   Pt screenToSpace (Pt screenPt) {
 
     var z = screenPt.z;
@@ -42,7 +41,6 @@ class DefaultIsometricTransformation implements AxonometricTransformationBase {
     return new Pt(x, y, z);
   }
 
-  @override
   Pt spaceToScreen (Pt spacePt) {
     if (_bAxonometricAxesProjection == false && _bMaintainZAxisRatio) {
       spacePt.z = spacePt.z / _axialProjection;

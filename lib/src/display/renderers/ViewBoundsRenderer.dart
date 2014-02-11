@@ -37,12 +37,11 @@ class ViewBoundsRenderer implements ViewRendererBase {
 
   void renderView (IsoViewBase view) {
 
-    if (!targetScenes || targetScenes.length < 1) targetScenes = view.scenes;
+    if (targetScenes == null || targetScenes.length < 1) targetScenes = view.scenes;
     var v= view as Sprite;
 
     var g = (targetGraphics!= null) ? targetGraphics : v.graphics;
     g.clear();
-    g.lineStyle(lineThickness, lineColor, lineAlpha);
 
     var bounds;
     var children = [];
@@ -57,7 +56,8 @@ class ViewBoundsRenderer implements ViewRendererBase {
         bounds = child.getBounds(v);
         bounds.width *= view.currentZoom;
         bounds.height *= view.currentZoom;
-        g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        g.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        g.strokeColor(lineColor, lineThickness);
       }
     }
   }
