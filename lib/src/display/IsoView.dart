@@ -180,14 +180,12 @@ class IsoView extends Sprite implements IsoViewBase {
       }
     }
 
-    if ( viewRenderers && numScenes > 0 ) {
-      // ToDo: was bedeutet das genau?
-      /*
-      for(IFactory factory in viewRendererFactories) {
-        IViewRenderer viewRenderer = factory.newInstance();
+    if ( viewRenderers != null && numScenes > 0 ) {
+      for(FactoryBase factory in _viewRendererFactories) {
+        ViewRendererBase viewRenderer = factory.newInstance();
         viewRenderer.renderView( this );
       }
-      */
+      
     }
   }
 
@@ -337,14 +335,12 @@ class IsoView extends Sprite implements IsoViewBase {
     if ( value != null) {
       var temp = [];
 
-      // ToDo: IFactory anschauen
-/*
       for each (var obj in value ) {
-        if (obj is IFactory) {
+        if (obj is FactoryBase) {
           temp.push( obj );
         }
       }
-*/
+
       _viewRendererFactories = temp;
       _bPositionInvalidated = true;
 
