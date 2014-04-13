@@ -8,7 +8,7 @@ class IsoRectangle extends IsoPolygon {
   /**
    * Constructor
    */
-  IsoRectangle (Map descriptor) : super(descriptor) {
+  IsoRectangle ([Map descriptor = null]) : super(descriptor) {
     if (descriptor == null)
       width = length = height = 0;
   }

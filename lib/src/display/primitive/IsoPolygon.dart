@@ -8,7 +8,7 @@ class IsoPolygon extends IsoPrimitive {
   /**
    * Constructor
    */
-  IsoPolygon (Map descriptor) : super(descriptor);
+  IsoPolygon ([Map descriptor = null]) : super(descriptor);
 
   /**
    * @inheritDoc
