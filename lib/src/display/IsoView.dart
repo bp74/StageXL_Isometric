@@ -203,7 +203,7 @@ class IsoView extends Sprite implements IsoViewBase {
     var dx = _currentScreenPt.x - _targetScreenPt.x;
     var dy = _currentScreenPt.y - _targetScreenPt.y;
 
-    if (limitRangeOfMotion && _romTarget ) {
+    if (limitRangeOfMotion && _romTarget != null) {
       var ndx = 0;
       var ndy = 0;
 
