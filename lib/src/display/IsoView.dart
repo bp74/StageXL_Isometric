@@ -335,7 +335,7 @@ class IsoView extends Sprite implements IsoViewBase {
     if ( value != null) {
       var temp = [];
 
-      for each (var obj in value ) {
+      for (var obj in value ) {
         if (obj is FactoryBase) {
           temp.push( obj );
         }
