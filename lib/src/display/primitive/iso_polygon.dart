@@ -8,7 +8,7 @@ class IsoPolygon extends IsoPrimitive {
   /**
    * Constructor
    */
-  IsoPolygon (Map descriptor) : super(descriptor);
+  IsoPolygon ([Map descriptor = null]) : super(descriptor);
 
   /**
    * @inheritDoc
@@ -22,7 +22,10 @@ class IsoPolygon extends IsoPrimitive {
     g.clear();
     g.moveTo(pts[0].x, pts[0].y);
 
-    var fill = fills[0];
+    var fill;
+    if (fills.length > 0) {
+      fill = fills[0];
+      }
     if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
     var stroke = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
@@ -37,7 +40,7 @@ class IsoPolygon extends IsoPrimitive {
 
     g.lineTo(pts[0].x, pts[0].y);
 
-    if (fill) fill.end(g);
+    if (fill != null) fill.end(g);
   }
 
   ////////////////////////////////////////////////////////////////////////
