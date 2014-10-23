@@ -83,6 +83,9 @@ class SceneBounds implements BoundsBase {
     return pt;
   }
 
+  /**
+   * Returns a list all edge [Pt]s created by the edges of the scene.
+   */
   List<Pt> getPts() {
     return [
       new Pt(_left, _back, _bottom),
@@ -114,6 +117,10 @@ class SceneBounds implements BoundsBase {
   //      CALCUALTE BOUNDS
   ////////////////////////////////////////////////////////////////
 
+  /**
+   * Determines the bounds of the scene based on the outermost child objects in each 
+   * direction.
+   */
   void _calculateBounds() {
 
     _left = double.NAN;
@@ -142,5 +149,4 @@ class SceneBounds implements BoundsBase {
     if (_bottom.isNaN) _bottom = 0;
     if (_top.isNaN) _top = 0;
   }
-
 }

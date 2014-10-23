@@ -1,7 +1,7 @@
 part of stagexl_isometric;
 
 /**
- * The IBounds interface defines the interface that all classes used bound-type information objects should use.
+ * The IBounds interface defines the interface that all classes with bound-type information objects should use.
  *
  * Properties of IBounds implementors will refer to properties in isometric space.
  */
@@ -89,11 +89,11 @@ abstract class BoundsBase {
   ///////////////////////////////////////////////////////////
 
   /**
-   * Determines if the IBounds oject has a 3D isometric intersection with the target IBounds.
+   * Determines if the IBounds object has a 3D isometric intersection with the target IBounds.
    *
    * @param bounds The IBounds object to test for an intersection against.
    *
-   * @returns Boolean Returns true if an intersection occured, else false.
+   * @returns Boolean Returns true if an intersection occurred, else false.
    */
   bool intersects (BoundsBase bounds);
 
