@@ -28,8 +28,8 @@ class IsoPolygon extends IsoPrimitive {
       }
     if (fill != null && styleType != RenderStyleType.WIREFRAME) fill.begin(g);
 
-    var stroke = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
-    if (stroke != null) stroke.apply(g);
+   // var stroke = strokes.length >= 1 ? strokes[0] : IsoPrimitive.DEFAULT_STROKE;
+    
 
     var i = 1;
     var l = pts.length;
@@ -39,6 +39,10 @@ class IsoPolygon extends IsoPrimitive {
     }
 
     g.lineTo(pts[0].x, pts[0].y);
+    
+    for (Stroke stroke in strokes) {
+      if (stroke != null) stroke.apply(g);
+    }
 
     if (fill != null) fill.end(g);
   }
