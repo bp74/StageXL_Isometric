@@ -6,12 +6,15 @@ import 'package:stagexl_isometric/stagexl_isometric.dart';
 
 void main() {
 
+  StageXL.stageOptions.renderEngine = RenderEngine.Canvas2D;
+  StageXL.stageOptions.backgroundColor = Color.AntiqueWhite;
+
   var canvas = html.querySelector('#stage');
   var stage = new Stage(canvas);
   var renderLoop = new RenderLoop();
   renderLoop.addStage(stage);
 
-  var background = new Bitmap(new BitmapData(800,600, false, 0x869ca7));
+  var background = new Bitmap(new BitmapData(800,600, 0x869ca7));
   stage.addChild(background);
 
   //var app = new IsoApplication1();
