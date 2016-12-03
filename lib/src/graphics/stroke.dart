@@ -33,12 +33,12 @@ class Stroke implements StrokeBase {
   /**
    * Specifies the type of caps at the end of lines.
    */
-  String caps;
+  CapsStyle caps;
 
   /**
    * Specifies the type of joint appearance used at angles.
    */
-  String joints;
+  JointStyle joints;
 
   /**
    * Indicates the limit at which a miter is cut off.
@@ -48,20 +48,12 @@ class Stroke implements StrokeBase {
   /**
    * Constructor
    */
-  Stroke (num weight, int color, [num alpha = 1.0, bool usePixelHinting = false,
-      String scaleMode = "normal",String caps = null, String joints= null, num miterLimit = 0]) :
-      this.weight = weight,
-      this.color = color,
-      this.alpha = alpha,
-      this.usePixelHinting = usePixelHinting,
-      this.scaleMode = scaleMode,
-      this.caps = caps,
-      this.joints = joints,
-      this.miterLimit = miterLimit;
+  Stroke (this.weight, this.color, [
+      this.alpha = 1.0, this.usePixelHinting = false,
+      this.scaleMode, this.caps, this.joints, this.miterLimit]);
 
   void apply (Graphics target) {
     // target.lineStyle(weight, color, alpha, usePixelHinting, scaleMode, caps, joints, miterLimit);
-
     var c = (color & 0xFFFFFF) | ((0xFF * alpha).toInt() << 24);
     target.strokeColor(c, weight, joints, caps);
   }

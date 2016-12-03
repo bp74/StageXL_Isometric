@@ -208,7 +208,7 @@ class IsoView extends Sprite implements IsoViewBase {
       var ndy = 0;
 
       var rect = _romTarget.getBounds( this );
-      var isROMBigger = !_romBoundsRect.containsRect(rect);
+      var isROMBigger = !_romBoundsRect.containsRectangle(rect);
 
       if ( isROMBigger ) {
         if ( dx > 0 ) {
@@ -337,7 +337,7 @@ class IsoView extends Sprite implements IsoViewBase {
 
       for (var obj in value ) {
         if (obj is FactoryBase) {
-          temp.push( obj );
+          temp.add( obj );
         }
       }
 

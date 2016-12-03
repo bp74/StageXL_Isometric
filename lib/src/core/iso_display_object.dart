@@ -49,7 +49,7 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
 
       isoRender(true);
 
-      var bd = new BitmapData( r.width + 1, r.height + 1, true, 0x000000 );
+      var bd = new BitmapData( r.width + 1, r.height + 1, 0x000000 );
       bd.draw(_mainContainer, new Matrix( 1, 0, 0, 1, -r.left, -r.top ) );
 
       var renderData = new RenderData();
@@ -98,8 +98,8 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   Rectangle get screenBounds {
 
     var screenBounds = _mainContainer.getBounds( _mainContainer );
-    screenBounds.x += _mainContainer.x;
-    screenBounds.y += _mainContainer.y;
+    screenBounds.left += _mainContainer.x;
+    screenBounds.top += _mainContainer.y;
 
     return screenBounds;
   }
@@ -107,12 +107,12 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   Rectangle getBounds(DisplayObject targetCoordinateSpace) {
 
     var rect = screenBounds;
-    var pt = new Point( rect.x, rect.y );
+    var pt = new Point( rect.left, rect.top );
     pt = (parent as IsoContainerBase).container.localToGlobal(pt);
     pt = targetCoordinateSpace.globalToLocal(pt);
 
-    rect.x = pt.x;
-    rect.y = pt.y;
+    rect.left = pt.x;
+    rect.top = pt.y;
 
     return rect;
   }

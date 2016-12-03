@@ -20,8 +20,6 @@ part of stagexl_isometric;
   //      BOUNDS
   ///////////////////////////////////////////////////////////////////////////////
 
-  BoundsBase _isoBounds;
-
   BoundsBase get isoBounds {
     /* if (!_isoBounds || isInvalidated)
             _isoBounds =  */

@@ -5,7 +5,6 @@ part of stagexl_isometric;
  */
 class DefaultIsometricTransformation implements AxonometricTransformationBase {
 
-  num _radians = 0;
   num _ratio = 2;
   num _axialProjection = cos(atan(0.5));
 

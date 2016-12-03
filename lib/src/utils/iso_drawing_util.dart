@@ -156,8 +156,8 @@ class IsoDrawingUtil {
 
     //get the screen bounds and adjust matrix for negative rect values.
     var rect = target.container.getBounds(target.container);
-    var bitmapdata = new BitmapData(rect.width, rect.height, true, 0);
-    bitmapdata.draw(target.container, new Matrix(1, 0, 0, 1, rect.x * -1, rect.y * -1));
+    var bitmapdata = new BitmapData(rect.width, rect.height, 0);
+    bitmapdata.draw(target.container, new Matrix(1, 0, 0, 1, rect.left * -1, rect.top * -1));
 
     return bitmapdata;
   }

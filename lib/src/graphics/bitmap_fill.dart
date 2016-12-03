@@ -50,7 +50,7 @@ class BitmapFill implements BitmapFillBase {
       _bitmapData = value.bitmapData;
     } else if (value is DisplayObject) {
       var bounds = value.getBounds(value).align();
-      _bitmapData = new BitmapData(bounds.right, bounds.bottom, true, 0);
+      _bitmapData = new BitmapData(bounds.right, bounds.bottom, 0);
       _bitmapData.draw(value);
     } else {
       throw new ArgumentError();

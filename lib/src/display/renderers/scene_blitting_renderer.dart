@@ -50,7 +50,7 @@ class SceneBlittingRenderer implements SceneRendererBase {
     var offsetMatrix = new Matrix(1, 0, 0, 0,
         view.width / 2 - view.currentX, view.height / 2 - view.currentY);
 
-    var sceneBitmapData = new BitmapData(view.width, view.height, true, 0);
+    var sceneBitmapData = new BitmapData(view.width, view.height, 0);
     sceneBitmapData.draw(scene.container, offsetMatrix);
 
     _targetBitmap.bitmapData = sceneBitmapData;

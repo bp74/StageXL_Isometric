@@ -26,7 +26,7 @@ class IsoOrigin extends IsoPrimitive {
 
   void _drawGeometry() { // protected
 
-    Pt pt0, pt1, ptM;
+    Pt pt0, pt1;
     Graphics g = _mainContainer.graphics;
 
     g.clear();
