@@ -77,7 +77,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
     // Set the childrens' depth, using dependency ordering
     _depth = 0;
     for (var obj in children) {
-      if (_visited[obj] == false) {
+      if (_visited[obj] == null) {
         place(obj);
       }
     }
@@ -102,7 +102,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
     _visited[obj] = true;
 
     for (var inner in _dependency[obj]) {
-      if(_visited[inner] == false) {
+      if(_visited[inner] == null) {
         place(inner);
       }
     }
