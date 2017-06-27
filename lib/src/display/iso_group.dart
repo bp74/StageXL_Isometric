@@ -21,8 +21,8 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
   List get invalidatedChildren {
     var a = new List();
 
-    for (var child in children) {
-      if (child.isInvalidated) {
+    for (NodeBase child in children) {
+      if (child is InvalidationBase && (child as InvalidationBase).isInvalidated) {
         a.add(child);
       }
     }

@@ -113,7 +113,7 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   List<StrokeBase> get strokes => new List<StrokeBase>.from(_edgesArray);
 
-  set strokes (List<StrokeBase> value) {
+  set strokes (covariant List<StrokeBase> value) {
 
     if (value != null) {
       _edgesArray = new List<StrokeBase>.from(value);
