@@ -46,9 +46,10 @@ class IsoError extends Error {
    * @param info The specific information associated with this error.
    * @param data The data associated with this error.
    */
-  IsoError (String message, [String info = "", dynamic data]) : super(),
+  IsoError (String message, [String info = "", dynamic data]) :
     this.message = message,
     this.info = info,
-    this.data = data;
+    this.data = data,
+    super();
 
 }

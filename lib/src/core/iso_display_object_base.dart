@@ -204,5 +204,5 @@ abstract class IsoDisplayObjectBase extends IsoContainerBase {
    *
    * @return IIsoDisplayObject The clone of the original.
    */
-  IsoDisplayObjectBase clone();
+  dynamic clone();
 }

@@ -101,7 +101,7 @@ class IsoContainer extends Node implements IsoContainerBase {
 
     var child = super.removeChildByID(id);
 
-    if ( child != null && child.includeInLayout ) {
+    if ( child != null && (child as IsoContainerBase).includeInLayout ) {
 
       var i = _displayListChildrenArray.indexOf(child);
       if (i != -1 ) {
@@ -116,7 +116,7 @@ class IsoContainer extends Node implements IsoContainerBase {
 
   void removeAllChildren() {
 
-    for(var child in children) {
+    for(IsoContainerBase child in children) {
       if ( child.includeInLayout )
         _mainContainer.removeChild(child.container);
     }

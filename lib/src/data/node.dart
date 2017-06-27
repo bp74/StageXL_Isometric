@@ -196,7 +196,7 @@ class Node extends EventDispatcher implements NodeBase {
 
   NodeBase removeChildByID(String id) {
 
-    var child = getChildByID(id);
+    Node child = getChildByID(id);
 
     if (child != null) {
       child._parentNode = null;
@@ -218,7 +218,7 @@ class Node extends EventDispatcher implements NodeBase {
 
   void removeAllChildren() {
 
-    for(var child in _childrenArray) {
+    for(Node child in _childrenArray) {
       child._parentNode = null;
     }
 
