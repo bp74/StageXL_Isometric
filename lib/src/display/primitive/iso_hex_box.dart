@@ -2,8 +2,8 @@ part of stagexl_isometric;
 
 class IsoHexBox extends IsoPrimitive {
 
-  static final num sin60 = sin(PI / 3);
-  static final num cos60 = cos(PI / 3);
+  static final num sin60 = sin(pi / 3);
+  static final num cos60 = cos(pi / 3);
 
   //////////////////////////////////////////////////
   //      CONSTRUCTOR
@@ -43,17 +43,17 @@ class IsoHexBox extends IsoPrimitive {
 
     var ptb0 = new Pt(sideLength / 2, 0, 0);
     var ptb1 = Pt.polar(ptb0, sideLength, 0);
-    var ptb2 = Pt.polar(ptb1, sideLength, PI / 3);
-    var ptb3 = Pt.polar(ptb2, sideLength, 2 * PI / 3);
-    var ptb4 = Pt.polar(ptb3, sideLength, PI);
-    var ptb5 = Pt.polar(ptb4, sideLength, 4 * PI / 3);
+    var ptb2 = Pt.polar(ptb1, sideLength, pi / 3);
+    var ptb3 = Pt.polar(ptb2, sideLength, 2 * pi / 3);
+    var ptb4 = Pt.polar(ptb3, sideLength, pi);
+    var ptb5 = Pt.polar(ptb4, sideLength, 4 * pi / 3);
 
     var ptt0 = new Pt(sideLength / 2, 0, height);
     var ptt1 = Pt.polar(ptt0, sideLength, 0);
-    var ptt2 = Pt.polar(ptt1, sideLength, PI / 3);
-    var ptt3 = Pt.polar(ptt2, sideLength, 2 * PI / 3);
-    var ptt4 = Pt.polar(ptt3, sideLength, PI);
-    var ptt5 = Pt.polar(ptt4, sideLength, 4 * PI / 3);
+    var ptt2 = Pt.polar(ptt1, sideLength, pi / 3);
+    var ptt3 = Pt.polar(ptt2, sideLength, 2 * pi / 3);
+    var ptt4 = Pt.polar(ptt3, sideLength, pi);
+    var ptt5 = Pt.polar(ptt4, sideLength, 4 * pi / 3);
 
     var pts = [ptb0, ptb1, ptb2, ptb3, ptb4, ptb5, ptt0, ptt1, ptt2, ptt3, ptt4, ptt5];
     for (var pt in pts)

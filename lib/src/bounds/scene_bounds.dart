@@ -123,12 +123,12 @@ class SceneBounds implements BoundsBase {
    */
   void _calculateBounds() {
 
-    _left = double.NAN;
-    _right = double.NAN;
-    _back = double.NAN;
-    _front = double.NAN;
-    _bottom = double.NAN;
-    _top = double.NAN;
+    _left = double.nan;
+    _right = double.nan;
+    _back = double.nan;
+    _front = double.nan;
+    _bottom = double.nan;
+    _top = double.nan;
 
     for (var child in _target.displayListChildren) {
 

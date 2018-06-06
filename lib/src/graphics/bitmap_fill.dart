@@ -81,7 +81,7 @@ class BitmapFill implements BitmapFillBase {
 
     if (value is String) {
       if (value == IsoOrientation.XY || value == IsoOrientation.XZ || value == IsoOrientation.YZ) {
-        _orientationMatrix = IsoDrawingUtil.getIsoMatrix(value as String);
+        _orientationMatrix = IsoDrawingUtil.getIsoMatrix(value);
       } else {
         _orientationMatrix = null;
       }

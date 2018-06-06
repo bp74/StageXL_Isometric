@@ -20,8 +20,8 @@ class IsoHexGrid extends IsoGrid {
   List _generatePts() {
 
     List pts = [];
-    num xOffset = cellSize * cos(PI / 3);
-    num yOffset = cellSize * sin(PI / 3);
+    num xOffset = cellSize * cos(pi / 3);
+    num yOffset = cellSize * sin(pi / 3);
 
     int i,j;
     int m = gridSize[0];
@@ -47,10 +47,10 @@ class IsoHexGrid extends IsoGrid {
 
     var pt0 = startPt.clone();
     var pt1 = Pt.polar(pt0, cellSize, 0);
-    var pt2 = Pt.polar(pt1, cellSize, PI / 3);
-    var pt3 = Pt.polar(pt2, cellSize, 2 * PI / 3);
-    var pt4 = Pt.polar(pt3, cellSize, PI);
-    var pt5 = Pt.polar(pt4, cellSize, 4 * PI / 3);
+    var pt2 = Pt.polar(pt1, cellSize, pi / 3);
+    var pt3 = Pt.polar(pt2, cellSize, 2 * pi / 3);
+    var pt4 = Pt.polar(pt3, cellSize, pi);
+    var pt5 = Pt.polar(pt4, cellSize, 4 * pi / 3);
 
     var pts = [pt0, pt1, pt2, pt3, pt4, pt5];
 

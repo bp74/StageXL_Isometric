@@ -7,8 +7,8 @@ class IsometricTransformation implements AxonometricTransformationBase {
 
   // TODO jwopitz: Figure out the proper conversion - http://www.compuphase.com/axometr.htm
 
-  num _cosTheta = cos(30 * PI / 180);
-  num _sinTheta = sin(30 * PI / 180);
+  num _cosTheta = cos(30 * pi / 180);
+  num _sinTheta = sin(30 * pi / 180);
 
   Pt screenToSpace (Pt screenPt) {
 

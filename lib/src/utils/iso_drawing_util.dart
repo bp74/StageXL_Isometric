@@ -88,7 +88,7 @@ class IsoDrawingUtil {
     var pt0 = new Pt();
     var pt1 = new Pt();
     var pt2 = new Pt();
-    var toRadians = PI / 180;
+    var toRadians = pi / 180;
     var ptR;
 
     switch (plane) {
@@ -178,17 +178,17 @@ class IsoDrawingUtil {
       case IsoOrientation.XY:
         var m2 = new Matrix.fromIdentity();
         m2.scale(1, 0.5);
-        m.rotate(PI / 4);
-        m.scale(SQRT2, SQRT2);
+        m.rotate(pi / 4);
+        m.scale(sqrt2, sqrt2);
         m.concat(m2);
         break;
 
       case IsoOrientation.XZ:
-        m.setTo(1, 30 * PI / 180, 0, 1, 0, 0);
+        m.setTo(1, 30 * pi / 180, 0, 1, 0, 0);
         break;
 
       case IsoOrientation.YZ:
-        m.setTo(1, -30 * PI / 180, 0, 1, 0, 0);
+        m.setTo(1, -30 * pi / 180, 0, 1, 0, 0);
         break;
     }
 
