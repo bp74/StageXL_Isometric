@@ -68,8 +68,8 @@ class Pt extends Point {
     var ty = ptB.y - ptA.y;
     var radians = atan(ty / tx);
 
-    if (tx < 0) radians += PI;
-    if (tx >= 0 && ty < 0) radians += PI * 2;
+    if (tx < 0) radians += pi;
+    if (tx >= 0 && ty < 0) radians += pi * 2;
     return radians;
   }
 
@@ -83,7 +83,7 @@ class Pt extends Point {
    * @return Number The angle in degrees between the two pts.
    */
   static num angle(Pt ptA, Pt ptB) {
-    return theta(ptA, ptB) * 180 / PI;
+    return theta(ptA, ptB) * 180 / pi;
   }
 
   /**
