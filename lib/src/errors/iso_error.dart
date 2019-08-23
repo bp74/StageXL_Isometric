@@ -1,7 +1,6 @@
 part of stagexl_isometric;
 
 class IsoError extends Error {
-
   //////////////////////////////////////////////////////////////////////
   //      CONST
   //////////////////////////////////////////////////////////////////////
@@ -20,36 +19,27 @@ class IsoError extends Error {
   //      PROPS
   //////////////////////////////////////////////////////////////////////
 
-  /**
-   * The message explaining this error.
-   */
+  /// The message explaining this error.
   String message;
 
-  /**
-   * The additional information (if any) for this error.
-   */
+  /// The additional information (if any) for this error.
   String info;
 
-  /**
-   * The data associated with this error.
-   */
+  /// The data associated with this error.
   dynamic data;
 
   //////////////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   //////////////////////////////////////////////////////////////////////
 
-  /**
-   * Constructor
-   *
-   * @param message The message associated with this error.
-   * @param info The specific information associated with this error.
-   * @param data The data associated with this error.
-   */
-  IsoError (String message, [String info = "", dynamic data]) :
-    this.message = message,
-    this.info = info,
-    this.data = data,
-    super();
-
+  /// Constructor
+  ///
+  /// @param message The message associated with this error.
+  /// @param info The specific information associated with this error.
+  /// @param data The data associated with this error.
+  IsoError(String message, [String info = "", dynamic data])
+      : this.message = message,
+        this.info = info,
+        this.data = data,
+        super();
 }

@@ -1,10 +1,7 @@
 part of stagexl_isometric;
 
-/**
- * The IBounds implementation for IIsoScene implementors.
- */
+/// The IBounds implementation for IIsoScene implementors.
 class SceneBounds implements BoundsBase {
-
   IsoSceneBase _target;
   num _left = 0;
   num _right = 0;
@@ -18,7 +15,7 @@ class SceneBounds implements BoundsBase {
   //      CONSTRUCTOR
   ////////////////////////////////////////////////////////////////
 
-  SceneBounds (IsoSceneBase target):_target = target {
+  SceneBounds(IsoSceneBase target) : _target = target {
     _calculateBounds();
   }
 
@@ -28,9 +25,7 @@ class SceneBounds implements BoundsBase {
 
   bool get excludeAnimatedChildren => _excludeAnimated;
 
-  /**
-   * Flag indicating to exclude animated child objects when calculating the scene's bounds.
-   */
+  /// Flag indicating to exclude animated child objects when calculating the scene's bounds.
   set excludeAnimatedChildren(bool value) {
     _excludeAnimated = value;
     _calculateBounds();
@@ -76,53 +71,48 @@ class SceneBounds implements BoundsBase {
   ////////////////////////////////////////////////////////////////
 
   Pt get centerPt {
-    var pt = new Pt();
+    var pt = Pt();
     pt.x = (_right - _left) / 2;
     pt.y = (_front - _back) / 2;
     pt.z = (_top - _bottom) / 2;
     return pt;
   }
 
-  /**
-   * Returns a list all edge [Pt]s created by the edges of the scene.
-   */
+  /// Returns a list all edge [Pt]s created by the edges of the scene.
   List<Pt> getPts() {
     return [
-      new Pt(_left, _back, _bottom),
-      new Pt(_right, _back, _bottom),
-      new Pt(_right, _front, _bottom),
-      new Pt(_left, _front, _bottom),
-      new Pt(_left, _back, _top),
-      new Pt(_right, _back, _top),
-      new Pt(_right, _front, _top),
-      new Pt(_left, _front, _top)];
+      Pt(_left, _back, _bottom),
+      Pt(_right, _back, _bottom),
+      Pt(_right, _front, _bottom),
+      Pt(_left, _front, _bottom),
+      Pt(_left, _back, _top),
+      Pt(_right, _back, _top),
+      Pt(_right, _front, _top),
+      Pt(_left, _front, _top)
+    ];
   }
 
   ////////////////////////////////////////////////////////////////
   //      COLLISION
   ////////////////////////////////////////////////////////////////
 
-  bool intersects (BoundsBase bounds) {
+  bool intersects(BoundsBase bounds) {
     return false;
   }
 
-  bool containsPt (Pt target) {
-    return
-      (_left <= target.x && target.x <= _right) &&
-      (_back <= target.y && target.y <= _front) &&
-      (_bottom <= target.z && target.z <= _top);
+  bool containsPt(Pt target) {
+    return (_left <= target.x && target.x <= _right) &&
+        (_back <= target.y && target.y <= _front) &&
+        (_bottom <= target.z && target.z <= _top);
   }
 
   ////////////////////////////////////////////////////////////////
   //      CALCUALTE BOUNDS
   ////////////////////////////////////////////////////////////////
 
-  /**
-   * Determines the bounds of the scene based on the outermost child objects in each 
-   * direction.
-   */
+  /// Determines the bounds of the scene based on the outermost child objects in each
+  /// direction.
   void _calculateBounds() {
-
     _left = double.nan;
     _right = double.nan;
     _back = double.nan;
@@ -131,14 +121,18 @@ class SceneBounds implements BoundsBase {
     _top = double.nan;
 
     for (var child in _target.displayListChildren) {
-
       if (_excludeAnimated && child.isAnimated) continue;
 
-      if (_left.isNaN || child.isoBounds.left < _left) _left = child.isoBounds.left;
-      if (_right.isNaN || child.isoBounds.right > _right) _right = child.isoBounds.right;
-      if (_back.isNaN || child.isoBounds.back < _back) _back = child.isoBounds.back;
-      if (_front.isNaN || child.isoBounds.front > _front) _front = child.isoBounds.front;
-      if (_bottom.isNaN || child.isoBounds.bottom < _bottom) _bottom = child.isoBounds.bottom;
+      if (_left.isNaN || child.isoBounds.left < _left)
+        _left = child.isoBounds.left;
+      if (_right.isNaN || child.isoBounds.right > _right)
+        _right = child.isoBounds.right;
+      if (_back.isNaN || child.isoBounds.back < _back)
+        _back = child.isoBounds.back;
+      if (_front.isNaN || child.isoBounds.front > _front)
+        _front = child.isoBounds.front;
+      if (_bottom.isNaN || child.isoBounds.bottom < _bottom)
+        _bottom = child.isoBounds.bottom;
       if (_top.isNaN || child.isoBounds.top > _top) _top = child.isoBounds.top;
     }
 

@@ -1,7 +1,6 @@
 part of stagexl_isometric;
 
 class IsoOrientation {
-
   static const String X = "x";
   static const String Y = "y";
   static const String Z = "z";

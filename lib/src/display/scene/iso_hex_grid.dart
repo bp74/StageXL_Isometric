@@ -1,10 +1,10 @@
 part of stagexl_isometric;
 
 class IsoHexGrid extends IsoGrid {
-
   IsoHexGrid([Map descriptor = null]) : super(descriptor);
 
-  void _drawGeometry() {  // protected
+  void _drawGeometry() {
+    // protected
 
     Graphics g = _mainContainer.graphics;
     g.clear();
@@ -13,24 +13,22 @@ class IsoHexGrid extends IsoGrid {
     if (stroke != null) stroke.apply(g);
 
     var pts = _generatePts();
-    for (var pt in pts)
-      _drawHexagon(pt, g);
+    for (var pt in pts) _drawHexagon(pt, g);
   }
 
   List _generatePts() {
-
     List pts = [];
     num xOffset = cellSize * cos(pi / 3);
     num yOffset = cellSize * sin(pi / 3);
 
-    int i,j;
+    int i, j;
     int m = gridSize[0];
     int n = gridSize[1];
 
     while (j < n) {
       i = 0;
       while (i < m) {
-        var pt = new Pt();
+        var pt = Pt();
         pt.x = i * (cellSize + xOffset);
         pt.y = j * yOffset * 2;
         if (i % 2 > 0) pt.y += yOffset;
@@ -43,8 +41,7 @@ class IsoHexGrid extends IsoGrid {
     return pts;
   }
 
-  void _drawHexagon (Pt startPt, Graphics g) {
-
+  void _drawHexagon(Pt startPt, Graphics g) {
     var pt0 = startPt.clone();
     var pt1 = Pt.polar(pt0, cellSize, 0);
     var pt2 = Pt.polar(pt1, cellSize, pi / 3);
@@ -58,7 +55,7 @@ class IsoHexGrid extends IsoGrid {
       IsoMath.isoToScreen(pt);
     }
 
-    var random = new Random();
+    var random = Random();
 
     g.beginPath();
     g.moveTo(pt0.x, pt0.y);

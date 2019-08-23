@@ -5,39 +5,37 @@ import 'package:stagexl/stagexl.dart';
 import 'package:stagexl_isometric/stagexl_isometric.dart';
 
 void main() {
-
   StageXL.stageOptions.renderEngine = RenderEngine.Canvas2D;
   StageXL.stageOptions.backgroundColor = Color.AntiqueWhite;
 
   var canvas = html.querySelector('#stage');
-  var stage = new Stage(canvas);
-  var renderLoop = new RenderLoop();
+  var stage = Stage(canvas);
+  var renderLoop = RenderLoop();
   renderLoop.addStage(stage);
 
-  var background = new Bitmap(new BitmapData(800,600, 0x869ca7));
+  var background = Bitmap(BitmapData(800, 600, 0x869ca7));
   stage.addChild(background);
 
   //var app = new IsoApplication1();
   //var app = new IsoApplication2();
-  var app = new IsoApplication3();
+  var app = IsoApplication3();
   app.x = 400;
   app.y = 200;
   stage.addChild(app);
-
 }
 
 class IsoApplication1 extends Sprite {
   IsoApplication1() {
-    var box = new IsoBox();
+    var box = IsoBox();
     box.setSize(25, 25, 25);
     box.moveTo(0, 0, 0);
 
-    var grid = new IsoGrid();
+    var grid = IsoGrid();
     grid.showOrigin = true;
     grid.setGridSize(10, 10);
     grid.moveTo(0, 0, 0);
 
-    var scene = new IsoScene();
+    var scene = IsoScene();
     scene.hostContainer = this;
     scene.addChild(box);
     scene.addChild(grid);
@@ -47,24 +45,25 @@ class IsoApplication1 extends Sprite {
 
 class IsoApplication2 extends Sprite {
   IsoApplication2() {
-    var box = new IsoBox();
+    var box = IsoBox();
     box.styleType = RenderStyleType.SHADED;
     box.fills = [
-      new SolidColorFill(0xff0000, .5),
-      new SolidColorFill(0x00ff00, .5),
-      new SolidColorFill(0x0000ff, .5),
-      new SolidColorFill(0xff0000, .5),
-      new SolidColorFill(0x00ff00, .5),
-      new SolidColorFill(0x0000ff, .5)];
+      SolidColorFill(0xff0000, .5),
+      SolidColorFill(0x00ff00, .5),
+      SolidColorFill(0x0000ff, .5),
+      SolidColorFill(0xff0000, .5),
+      SolidColorFill(0x00ff00, .5),
+      SolidColorFill(0x0000ff, .5)
+    ];
     box.setSize(25, 50, 40);
     box.moveTo(0, 0, 0);
 
-    var grid = new IsoGrid();
+    var grid = IsoGrid();
     grid.showOrigin = true;
     grid.setGridSize(10, 10);
     grid.moveTo(0, 0, 0);
 
-    var scene = new IsoScene();
+    var scene = IsoScene();
     scene.hostContainer = this;
     scene.addChild(grid);
     scene.addChild(box);
@@ -74,38 +73,40 @@ class IsoApplication2 extends Sprite {
 
 class IsoApplication3 extends Sprite {
   IsoApplication3() {
-    var box = new IsoBox();
+    var box = IsoBox();
     box.setSize(25, 25, 25);
     box.fills = [
-      new SolidColorFill(0xff00ff, 1),
-      new SolidColorFill(0xff00ff, 1),
-      new SolidColorFill(0xff00ff, 1),
-      new SolidColorFill(0xff00ff, 1),
-      new SolidColorFill(0xff00ff, 1),
-      new SolidColorFill(0xff00ff, 1)];
+      SolidColorFill(0xff00ff, 1),
+      SolidColorFill(0xff00ff, 1),
+      SolidColorFill(0xff00ff, 1),
+      SolidColorFill(0xff00ff, 1),
+      SolidColorFill(0xff00ff, 1),
+      SolidColorFill(0xff00ff, 1)
+    ];
     box.moveTo(0, 25, 0);
 
-    var box2 = new IsoBox();
+    var box2 = IsoBox();
     box2.setSize(25, 25, 25);
     box2.fills = [
-      new SolidColorFill(0xffff00, 1),
-      new SolidColorFill(0xffff00, 1),
-      new SolidColorFill(0xffff00, 1),
-      new SolidColorFill(0xffff00, 1),
-      new SolidColorFill(0xffff00, 1),
-      new SolidColorFill(0xffff00, 1)];
+      SolidColorFill(0xffff00, 1),
+      SolidColorFill(0xffff00, 1),
+      SolidColorFill(0xffff00, 1),
+      SolidColorFill(0xffff00, 1),
+      SolidColorFill(0xffff00, 1),
+      SolidColorFill(0xffff00, 1)
+    ];
     box2.moveTo(25, 25, 0);
 
-    var box3 = new IsoBox();
+    var box3 = IsoBox();
     box3.setSize(25, 25, 25);
     box3.moveTo(25, 0, 0);
 
-    var grid = new IsoGrid();
+    var grid = IsoGrid();
     grid.showOrigin = true;
     grid.setGridSize(10, 10);
     grid.moveTo(0, 0, 0);
 
-    var scene = new IsoScene();
+    var scene = IsoScene();
     scene.hostContainer = this;
     scene.addChild(grid);
 
@@ -116,5 +117,3 @@ class IsoApplication3 extends Sprite {
     scene.isoRender();
   }
 }
-
-

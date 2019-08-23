@@ -1,24 +1,23 @@
 part of stagexl_isometric;
 
 class BitmapFill implements BitmapFillBase {
-
   ///////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ///////////////////////////////////////////////////////////
 
-  /**
-   * Constructor
-   *
-   * @param source The target that serves as the context for the fill. Any assignment to a BitmapData, DisplayObject, Class, and String (as a fully qualified class path) are valid.
-   * @param orientation The expect orientation of the fill.  Valid values relate to the IsoOrientation constants.
-   * @param matrix A user defined matrix for custom transformations.
-   * @param colorTransform Used to assign additional custom color transformations to the fill.
-   * @param repeat Flag indicating whether to repeat the fill.  If this is false, then the fill will be stretched.
-   * @param smooth Flag indicating whether to smooth the fill.
-   */
-  BitmapFill (dynamic source, [dynamic orientation = null, Matrix matrix = null,
-      ColorTransform colorTransform = null, bool repeat = true]) {
-
+  /// Constructor
+  ///
+  /// @param source The target that serves as the context for the fill. Any assignment to a BitmapData, DisplayObject, Class, and String (as a fully qualified class path) are valid.
+  /// @param orientation The expect orientation of the fill.  Valid values relate to the IsoOrientation constants.
+  /// @param matrix A user defined matrix for custom transformations.
+  /// @param colorTransform Used to assign additional custom color transformations to the fill.
+  /// @param repeat Flag indicating whether to repeat the fill.  If this is false, then the fill will be stretched.
+  /// @param smooth Flag indicating whether to smooth the fill.
+  BitmapFill(dynamic source,
+      [dynamic orientation = null,
+      Matrix matrix = null,
+      ColorTransform colorTransform = null,
+      bool repeat = true]) {
     this.source = source;
     this.orientation = orientation;
 
@@ -37,11 +36,8 @@ class BitmapFill implements BitmapFillBase {
 
   BitmapDrawable get source => _sourceObject;
 
-  /**
-   * The source object for the bitmap fill.
-   */
+  /// The source object for the bitmap fill.
   set source(BitmapDrawable value) {
-
     _sourceObject = value;
 
     if (value is BitmapData) {
@@ -50,14 +46,14 @@ class BitmapFill implements BitmapFillBase {
       _bitmapData = value.bitmapData;
     } else if (value is DisplayObject) {
       var bounds = value.getBounds(value).align();
-      _bitmapData = new BitmapData(bounds.right, bounds.bottom, 0);
+      _bitmapData = BitmapData(bounds.right, bounds.bottom, 0);
       _bitmapData.draw(value);
     } else {
-      throw new ArgumentError();
+      throw ArgumentError();
     }
 
     if (_cTransform != null) {
-      var rect = new Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
+      var rect = Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
       _bitmapData.colorTransform(rect, _cTransform);
     }
   }
@@ -71,16 +67,15 @@ class BitmapFill implements BitmapFillBase {
 
   dynamic get orientation => _orientation;
 
-  /**
-    * The planar orientation of fill relative to an isometric face.  This can either be a string value enumerated in the IsoOrientation or a matrix.
-    */
-  set orientation (dynamic value) {
-
+  /// The planar orientation of fill relative to an isometric face.  This can either be a string value enumerated in the IsoOrientation or a matrix.
+  set orientation(dynamic value) {
     _orientation = value;
     if (value == null) return;
 
     if (value is String) {
-      if (value == IsoOrientation.XY || value == IsoOrientation.XZ || value == IsoOrientation.YZ) {
+      if (value == IsoOrientation.XY ||
+          value == IsoOrientation.XZ ||
+          value == IsoOrientation.YZ) {
         _orientationMatrix = IsoDrawingUtil.getIsoMatrix(value);
       } else {
         _orientationMatrix = null;
@@ -88,7 +83,7 @@ class BitmapFill implements BitmapFillBase {
     } else if (value is Matrix) {
       _orientationMatrix = value;
     } else {
-      throw new ArgumentError("value is not of type String or Matrix");
+      throw ArgumentError("value is not of type String or Matrix");
     }
   }
 
@@ -100,40 +95,33 @@ class BitmapFill implements BitmapFillBase {
 
   ColorTransform get colorTransform => _cTransform;
 
-  /**
-   * A color transformation applied to the source object.
-   */
-  set colorTransform (ColorTransform value) {
+  /// A color transformation applied to the source object.
+  set colorTransform(ColorTransform value) {
     _cTransform = value;
 
     if (_bitmapData != null && _cTransform != null) {
-      var rect = new Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
+      var rect = Rectangle(0, 0, _bitmapData.width, _bitmapData.height);
       _bitmapData.colorTransform(rect, _cTransform);
     }
   }
 
   Matrix _matrixObject;
 
-  /**
-   * The transformation matrix applied to the source relative to the isometric face.  This matrix is applied before the orientation adjustments.
-   */
+  /// The transformation matrix applied to the source relative to the isometric face.  This matrix is applied before the orientation adjustments.
   Matrix get matrix => _matrixObject;
 
-  set matrix (Matrix value) {
+  set matrix(Matrix value) {
     _matrixObject = value;
   }
 
   bool _bRepeat;
 
-  /**
-   * A flag indicating whether the bitmap is repeated to fill the area.
-   */
+  /// A flag indicating whether the bitmap is repeated to fill the area.
   bool get repeat => _bRepeat;
 
-  set repeat (bool value) {
+  set repeat(bool value) {
     _bRepeat = value;
   }
-
 
   ///////////////////////////////////////////////////////////
   //      IFILL
@@ -143,9 +131,8 @@ class BitmapFill implements BitmapFillBase {
   var _beginFillMatrix;
   var _beginFillRepeat;
 
-  void begin (Graphics target) {
-
-    var m = new Matrix.fromIdentity();
+  void begin(Graphics target) {
+    var m = Matrix.fromIdentity();
 
     if (_orientationMatrix != null) {
       m.concat(_orientationMatrix);
@@ -160,17 +147,15 @@ class BitmapFill implements BitmapFillBase {
     _beginFillRepeat = repeat;
   }
 
-  void end (Graphics target) {
-
+  void end(Graphics target) {
     var pattern = _beginFillRepeat
-        ? new GraphicsPattern.repeat(_beginFillBitmapData, _beginFillMatrix)
-        : new GraphicsPattern.noRepeat(_beginFillBitmapData, _beginFillMatrix);
+        ? GraphicsPattern.repeat(_beginFillBitmapData, _beginFillMatrix)
+        : GraphicsPattern.noRepeat(_beginFillBitmapData, _beginFillMatrix);
 
     target.fillPattern(pattern);
   }
 
-  FillBase clone () {
-    return new BitmapFill(source, orientation, matrix, colorTransform, repeat);
+  FillBase clone() {
+    return BitmapFill(source, orientation, matrix, colorTransform, repeat);
   }
-
 }

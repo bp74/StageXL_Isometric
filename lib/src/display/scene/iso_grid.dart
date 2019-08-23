@@ -1,18 +1,15 @@
 part of stagexl_isometric;
 
-/**
- * IsoGrid provides a display grid in the X-Y plane.
- */
+/// IsoGrid provides a display grid in the X-Y plane.
 class IsoGrid extends IsoPrimitive {
-
   ////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ////////////////////////////////////////////////////
 
-  IsoGrid ([Map descriptor = null]) : super(descriptor) {
+  IsoGrid([Map descriptor = null]) : super(descriptor) {
     if (descriptor == null) {
       showOrigin = true;
-      gridlines = new Stroke(0, 0xCCCCCC, 0.5);
+      gridlines = Stroke(0, 0xCCCCCC, 0.5);
       cellSize = 25;
       setGridSize(5, 5);
     }
@@ -24,19 +21,15 @@ class IsoGrid extends IsoPrimitive {
 
   List _gSize = [0, 0, 0];
 
-  /**
-   * Returns an array containing the width and length of the grid.
-   */
+  /// Returns an array containing the width and length of the grid.
   List get gridSize => _gSize;
 
-  /**
-   * Sets the number of grid cells in each direction respectively.
-   *
-   * @param width The number of cells along the x-axis.
-   * @param length The number of cells along the y-axis.
-   * @param height The number of cells along the z-axis (currently not implemented).
-   */
-  void setGridSize (int width, int length, [int height = 0]) {
+  /// Sets the number of grid cells in each direction respectively.
+  ///
+  /// @param width The number of cells along the x-axis.
+  /// @param length The number of cells along the y-axis.
+  /// @param height The number of cells along the z-axis (currently not implemented).
+  void setGridSize(int width, int length, [int height = 0]) {
     if (_gSize[0] != width || _gSize[1] != length || _gSize[2] != height) {
       _gSize = [width, length, height];
       invalidateSize();
@@ -51,12 +44,10 @@ class IsoGrid extends IsoPrimitive {
 
   num get cellSize => _cSize;
 
-  /**
-   * Represents the size of each grid cell.  This value sets both the width, length and height (where applicable) to the same size.
-   */
-  void set cellSize (num value) {
+  /// Represents the size of each grid cell.  This value sets both the width, length and height (where applicable) to the same size.
+  void set cellSize(num value) {
     if (value < 2) {
-      throw new ArgumentError("cellSize must be a positive value greater than 2");
+      throw ArgumentError("cellSize must be a positive value greater than 2");
     }
 
     if (_cSize != value) {
@@ -72,12 +63,10 @@ class IsoGrid extends IsoPrimitive {
   bool _bShowOrigin = false;
   bool _showOriginChanged = false;
 
-  /**
-   * The origin indicator located at 0, 0, 0.
-   */
+  /// The origin indicator located at 0, 0, 0.
   IsoOrigin get origin {
     if (_origin == null) {
-      _origin = new IsoOrigin();
+      _origin = IsoOrigin();
     }
 
     return _origin;
@@ -85,10 +74,8 @@ class IsoGrid extends IsoPrimitive {
 
   bool get showOrigin => _bShowOrigin;
 
-  /**
-   * Flag determining if the origin is visible.
-   */
-  set showOrigin (bool value) {
+  /// Flag determining if the origin is visible.
+  set showOrigin(bool value) {
     if (_bShowOrigin != value) {
       _bShowOrigin = value;
       _showOriginChanged = true;
@@ -104,14 +91,14 @@ class IsoGrid extends IsoPrimitive {
     return strokes[0];
   }
 
-  set gridlines (StrokeBase value) {
+  set gridlines(StrokeBase value) {
     strokes = [value];
   }
 
-
   IsoOrigin _origin;
 
-  _renderLogic ([bool recursive = true]) { // protected
+  _renderLogic([bool recursive = true]) {
+    // protected
 
     if (_showOriginChanged) {
       if (showOrigin) {
@@ -130,20 +117,21 @@ class IsoGrid extends IsoPrimitive {
     super._renderLogic(recursive);
   }
 
-  _drawGeometry() { // protected
+  _drawGeometry() {
+    // protected
 
     Graphics g = _mainContainer.graphics;
     g.clear();
 
     var stroke = strokes[0];
-    var pt = new Pt();
+    var pt = Pt();
 
     int i = 0;
     int m = gridSize[0];
     while (i <= m) {
-      pt = IsoMath.isoToScreen(new Pt(_cSize * i));
+      pt = IsoMath.isoToScreen(Pt(_cSize * i));
       g.moveTo(pt.x, pt.y);
-      pt = IsoMath.isoToScreen(new Pt(_cSize * i, _cSize * gridSize[1]));
+      pt = IsoMath.isoToScreen(Pt(_cSize * i, _cSize * gridSize[1]));
       g.lineTo(pt.x, pt.y);
       i++;
     }
@@ -151,9 +139,9 @@ class IsoGrid extends IsoPrimitive {
     i = 0;
     m = gridSize[1];
     while (i <= m) {
-      pt = IsoMath.isoToScreen(new Pt(0, _cSize * i));
+      pt = IsoMath.isoToScreen(Pt(0, _cSize * i));
       g.moveTo(pt.x, pt.y);
-      pt = IsoMath.isoToScreen(new Pt(_cSize * gridSize[0], _cSize * i));
+      pt = IsoMath.isoToScreen(Pt(_cSize * gridSize[0], _cSize * i));
       g.lineTo(pt.x, pt.y);
       i++;
     }
@@ -161,22 +149,21 @@ class IsoGrid extends IsoPrimitive {
     if (stroke != null) stroke.apply(g);
 
     //now add the invisible layer to receive mouse events
-    pt = IsoMath.isoToScreen(new Pt(0, 0));
+    pt = IsoMath.isoToScreen(Pt(0, 0));
     g.moveTo(pt.x, pt.y);
 
-    pt = IsoMath.isoToScreen(new Pt(_cSize * gridSize[0], 0));
+    pt = IsoMath.isoToScreen(Pt(_cSize * gridSize[0], 0));
     g.lineTo(pt.x, pt.y);
 
-    pt = IsoMath.isoToScreen(new Pt(_cSize * gridSize[0], _cSize * gridSize[1]));
+    pt = IsoMath.isoToScreen(Pt(_cSize * gridSize[0], _cSize * gridSize[1]));
     g.lineTo(pt.x, pt.y);
 
-    pt = IsoMath.isoToScreen(new Pt(0, _cSize * gridSize[1]));
+    pt = IsoMath.isoToScreen(Pt(0, _cSize * gridSize[1]));
     g.lineTo(pt.x, pt.y);
 
-    pt = IsoMath.isoToScreen(new Pt(0, 0));
+    pt = IsoMath.isoToScreen(Pt(0, 0));
     g.lineTo(pt.x, pt.y);
 
-   // g.fillColor(0x80FF0000);
-
+    // g.fillColor(0x80FF0000);
   }
 }

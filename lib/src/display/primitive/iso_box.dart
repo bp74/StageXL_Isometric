@@ -1,38 +1,35 @@
 part of stagexl_isometric;
 
-/**
- * 3D box primitive in isometric space.
- */
- class IsoBox extends IsoPrimitive {
+/// 3D box primitive in isometric space.
+class IsoBox extends IsoPrimitive {
+  /// Constructor
+  IsoBox([Map descriptor = null]) : super(descriptor);
 
-   /**
-   * Constructor
-   */
-  IsoBox ([Map descriptor = null]):super(descriptor);
-
-  set stroke (StrokeBase value) {
+  set stroke(StrokeBase value) {
     strokes = [value, value, value, value, value, value];
   }
 
-  bool _validateGeometry() { // protected
+  bool _validateGeometry() {
+    // protected
     return (width <= 0 && length <= 0 && height <= 0) ? false : true;
   }
 
-  _drawGeometry () { // protected
+  _drawGeometry() {
+    // protected
 
-    Graphics  g = _mainContainer.graphics;
+    Graphics g = _mainContainer.graphics;
     g.clear();
 
     //all pts are named in following order "x", "y", "z" via rfb = right, front, bottom
-    var lbb = IsoMath.isoToScreen(new Pt(0, 0, 0));
-    var rbb = IsoMath.isoToScreen(new Pt(width, 0, 0));
-    var rfb = IsoMath.isoToScreen(new Pt(width, length, 0));
-    var lfb = IsoMath.isoToScreen(new Pt(0, length, 0));
+    var lbb = IsoMath.isoToScreen(Pt(0, 0, 0));
+    var rbb = IsoMath.isoToScreen(Pt(width, 0, 0));
+    var rfb = IsoMath.isoToScreen(Pt(width, length, 0));
+    var lfb = IsoMath.isoToScreen(Pt(0, length, 0));
 
-    var lbt = IsoMath.isoToScreen(new Pt(0, 0, height));
-    var rbt = IsoMath.isoToScreen(new Pt(width, 0, height));
-    var rft = IsoMath.isoToScreen(new Pt(width, length, height));
-    var lft = IsoMath.isoToScreen(new Pt(0, length, height));
+    var lbt = IsoMath.isoToScreen(Pt(0, 0, height));
+    var rbt = IsoMath.isoToScreen(Pt(width, 0, height));
+    var rft = IsoMath.isoToScreen(Pt(width, length, height));
+    var lft = IsoMath.isoToScreen(Pt(0, length, height));
 
     var fill;
     var stroke;
@@ -95,7 +92,7 @@ part of stagexl_isometric;
     if (fill != null && styleType != RenderStyleType.WIREFRAME) {
       if (fill is BitmapFillBase) {
         var m = fill.matrix;
-        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        if (m == null) m = Matrix(1, 0, 0, 1, 0, 0);
         m.translate(lfb.x, lfb.y);
         if (fill.repeat == false) {
           //calculate how to stretch fill for face
@@ -124,7 +121,7 @@ part of stagexl_isometric;
     if (fill != null && styleType != RenderStyleType.WIREFRAME) {
       if (fill is BitmapFillBase) {
         var m = fill.matrix;
-        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        if (m == null) m = Matrix(1, 0, 0, 1, 0, 0);
         m.translate(lfb.x, lfb.y);
         if (fill.repeat == false) {
           //calculate how to stretch fill for face
@@ -153,7 +150,7 @@ part of stagexl_isometric;
     if (fill != null && styleType != RenderStyleType.WIREFRAME) {
       if (fill is BitmapFillBase) {
         var m = fill.matrix;
-        if (m == null) m = new Matrix(1,0,0,1,0,0);
+        if (m == null) m = Matrix(1, 0, 0, 1, 0, 0);
         m.translate(lbt.x, lbt.y);
         if (fill.repeat == false) {
           //calculate how to stretch fill for face

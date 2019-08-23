@@ -1,46 +1,31 @@
 part of stagexl_isometric;
 
-/**
- * ViewBoundsRenderer is used to draw bounding rectangles to a target graphics object based on the location of the IIsoView's scene's child object relative to the IIsoView.
- */
+/// ViewBoundsRenderer is used to draw bounding rectangles to a target graphics object based on the location of the IIsoView's scene's child object relative to the IIsoView.
 class ViewBoundsRenderer implements ViewRendererBase {
-
-  /**
-   * Flag indicating if all children or only those present in the display list has their bounds drawn.
-   */
+  /// Flag indicating if all children or only those present in the display list has their bounds drawn.
   bool drawAll = true;
 
-  /**
-   * The target graphics to draw the IIsoView's scene's child objects.  Default value is <code>null</code>.
-   */
+  /// The target graphics to draw the IIsoView's scene's child objects.  Default value is <code>null</code>.
   Graphics targetGraphics;
 
-  /**
-   * The line thickness of the bounding rectangles being drawn.  Default value is 0.
-   */
+  /// The line thickness of the bounding rectangles being drawn.  Default value is 0.
   num lineThickness = 0;
 
-  /**
-   * The line color of the bounding rectangles being drawn.  Default value is 0xFF0000.
-   */
+  /// The line color of the bounding rectangles being drawn.  Default value is 0xFF0000.
   int lineColor = 0xff0000;
 
-  /**
-   * The line alpha of the bounding rectangles being drawn.  Default value is 1.
-   */
+  /// The line alpha of the bounding rectangles being drawn.  Default value is 1.
   num lineAlpha = 1.0;
 
-  /**
-   *
-   */
+  ///
   List targetScenes;
 
-  void renderView (IsoViewBase view) {
+  void renderView(IsoViewBase view) {
+    if (targetScenes == null || targetScenes.length < 1)
+      targetScenes = view.scenes;
+    var v = view as Sprite;
 
-    if (targetScenes == null || targetScenes.length < 1) targetScenes = view.scenes;
-    var v= view as Sprite;
-
-    var g = (targetGraphics!= null) ? targetGraphics : v.graphics;
+    var g = (targetGraphics != null) ? targetGraphics : v.graphics;
     g.clear();
 
     var bounds;

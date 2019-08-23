@@ -1,19 +1,14 @@
 part of stagexl_isometric;
 
-/**
- * A base hierachical data structure class.
- */
+/// A base hierachical data structure class.
 class Node extends EventDispatcher implements NodeBase {
-
   ////////////////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Constructor
-   */
+  /// Constructor
 
-  Node(): super();
+  Node() : super();
 
   ////////////////////////////////////////////////////////////////////////
   //      ID
@@ -85,11 +80,9 @@ class Node extends EventDispatcher implements NodeBase {
   }
 
   List<NodeBase> getDescendantNodes([bool includeBranches = false]) {
-
-    var descendants = new List<NodeBase>();
+    var descendants = List<NodeBase>();
 
     for (var child in _childrenArray) {
-
       if (child.children.length > 0) {
         descendants.addAll(child.getDescendantNodes(includeBranches));
         if (includeBranches) descendants.add(child);
@@ -106,22 +99,18 @@ class Node extends EventDispatcher implements NodeBase {
   ////////////////////////////////////////////////////////////////////////
 
   bool contains(NodeBase value) {
-
     if (value.hasParent) {
-
       return value.parent == this;
-
     } else {
-
-      for(var child in _childrenArray) {
-        if ( child == value ) return true;
+      for (var child in _childrenArray) {
+        if (child == value) return true;
       }
 
       return false;
     }
   }
 
-  List<NodeBase> _childrenArray = new List<NodeBase>();
+  List<NodeBase> _childrenArray = List<NodeBase>();
   List<NodeBase> get children => _childrenArray;
 
   int get numChildren => _childrenArray.length;
@@ -131,7 +120,6 @@ class Node extends EventDispatcher implements NodeBase {
   }
 
   void addChildAt(NodeBase child, int index) {
-
     //if it already exists here, do nothing
     if (getChildByID(child.id) != null) {
       return;
@@ -146,31 +134,30 @@ class Node extends EventDispatcher implements NodeBase {
     (child as Node)._parentNode = this;
     _childrenArray.insert(index, child);
 
-    var evt = new IsoEvent(IsoEvent.CHILD_ADDED);
+    var evt = IsoEvent(IsoEvent.CHILD_ADDED);
     evt.newValue = child;
 
     dispatchEvent(evt);
   }
 
   NodeBase getChildAt(int index) {
-    if ( index >= numChildren ) throw new ArgumentError();
+    if (index >= numChildren) throw ArgumentError();
     return _childrenArray[index];
   }
 
   int getChildIndex(NodeBase child) {
-    for(int i = 0; i < numChildren; i++) {
+    for (int i = 0; i < numChildren; i++) {
       if (child == _childrenArray[i]) return i;
     }
     return -1;
   }
 
   void setChildIndex(NodeBase child, int index) {
-
-    int i = getChildIndex( child );
+    int i = getChildIndex(child);
 
     // Don't bother if it's already at this index
     if (i == index) return;
-    if (i == -1 )  throw new ArgumentError("Node is not a children.");
+    if (i == -1) throw ArgumentError("Node is not a children.");
 
     _childrenArray.removeAt(i);
 
@@ -195,30 +182,28 @@ class Node extends EventDispatcher implements NodeBase {
   }
 
   NodeBase removeChildByID(String id) {
-
     Node child = getChildByID(id);
 
     if (child != null) {
       child._parentNode = null;
 
-      for (int i = 0; i < _childrenArray.length; i++ ) {
+      for (int i = 0; i < _childrenArray.length; i++) {
         if (child == _childrenArray[i]) {
           _childrenArray.removeAt(i);
           break;
         }
       }
 
-      var evt = new IsoEvent( IsoEvent.CHILD_REMOVED );
+      var evt = IsoEvent(IsoEvent.CHILD_REMOVED);
       evt.newValue = child;
-      dispatchEvent( evt );
+      dispatchEvent(evt);
     }
 
     return child;
   }
 
   void removeAllChildren() {
-
-    for(Node child in _childrenArray) {
+    for (Node child in _childrenArray) {
       child._parentNode = null;
     }
 
@@ -226,12 +211,10 @@ class Node extends EventDispatcher implements NodeBase {
   }
 
   NodeBase getChildByID(String id) {
-
     for (var child in _childrenArray) {
       if (child.id == id) return child;
     }
 
     return null;
   }
-
 }

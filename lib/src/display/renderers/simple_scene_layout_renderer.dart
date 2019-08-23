@@ -1,19 +1,15 @@
 part of stagexl_isometric;
 
 class SimpleSceneLayoutRenderer implements SceneLayoutRendererBase {
-
-  /**
-   * Array of propert names to sort scene's children by.  The default value is <code>["y", "x", "z"]</code>.
-   */
+  /// Array of propert names to sort scene's children by.  The default value is <code>["y", "x", "z"]</code>.
   List sortOnProps = ["y", "x", "z"];
 
   ////////////////////////////////////////////////////
   //      RENDER SCENE
   ////////////////////////////////////////////////////
 
-  void renderScene (IsoSceneBase scene) {
-
-    var children = new List.from(scene.displayListChildren);
+  void renderScene(IsoSceneBase scene) {
+    var children = List.from(scene.displayListChildren);
     //children.sortOn(sortOnProps, Array.NUMERIC);
 
     // ToDo: implement "sortOn" method workaround
@@ -37,7 +33,7 @@ class SimpleSceneLayoutRenderer implements SceneLayoutRendererBase {
 
   dynamic get collisionDetection => _collisionDetectionFunc;
 
-  set collisionDetection (dynamic value) {
+  set collisionDetection(dynamic value) {
     _collisionDetectionFunc = value;
   }
 }

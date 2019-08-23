@@ -1,65 +1,51 @@
 part of stagexl_isometric;
 
-/**
- * IsoView is a default view port that provides basic panning and zooming functionality on a given IIsoScene.
- */
+/// IsoView is a default view port that provides basic panning and zooming functionality on a given IIsoScene.
 class IsoView extends Sprite implements IsoViewBase {
-
   ///////////////////////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ///////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Constructor
-   */
-  IsoView():super() {
+  /// Constructor
+  IsoView() : super() {
+    _sceneContainer = Sprite();
 
-    _sceneContainer = new Sprite();
+    _mContainer = Sprite();
+    _mContainer.addChild(_sceneContainer);
 
-    _mContainer = new Sprite();
-    _mContainer.addChild( _sceneContainer );
+    _zoomContainer = Sprite();
+    _zoomContainer.addChild(_mContainer);
+    addChild(_zoomContainer);
 
-    _zoomContainer = new Sprite();
-    _zoomContainer.addChild(_mContainer );
-    addChild( _zoomContainer );
+    _maskShape = Shape();
+    addChild(_maskShape);
 
-    _maskShape = new Shape();
-    addChild( _maskShape );
-
-    _borderShape = new Shape();
+    _borderShape = Shape();
     addChild(_borderShape);
 
-    setSize( 400, 250 );
+    setSize(400, 250);
   }
 
   ///////////////////////////////////////////////////////////////////////////////
   //      PRECISION
   ///////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Flag indicating if coordinate values are rounded to the nearest whole number or not.
-   */
+  /// Flag indicating if coordinate values are rounded to the nearest whole number or not.
   bool usePreciseValues = false;
 
   ///////////////////////////////////////////////////////////////////////////////
   //      CURRENT PT
   ///////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * @private
-   *
-   * The targeted point to perform calculations on.
-   */
-  Pt _targetScreenPt = new Pt(); // protected
+  /// @private
+  ///
+  /// The targeted point to perform calculations on.
+  Pt _targetScreenPt = Pt(); // protected
 
-  /**
-   * @private
-   */
-  Pt _currentScreenPt = new Pt(); // protected
+  /// @private
+  Pt _currentScreenPt = Pt(); // protected
 
-  /**
-   * @inheritDoc
-   */
+  /// @inheritDoc
   Pt get currentPt => _currentScreenPt.clone() as Pt;
 
   //      CURRENT X
@@ -68,9 +54,7 @@ class IsoView extends Sprite implements IsoViewBase {
   num get currentX => _currentScreenPt.x;
 
   set currentX(num value) {
-
-    if (_currentScreenPt.x != value ) {
-
+    if (_currentScreenPt.x != value) {
       if (_targetScreenPt == null)
         _targetScreenPt = _currentScreenPt.clone() as Pt;
 
@@ -86,9 +70,7 @@ class IsoView extends Sprite implements IsoViewBase {
   num get currentY => _currentScreenPt.y;
 
   set currentY(num value) {
-
-    if (_currentScreenPt.y != value ) {
-
+    if (_currentScreenPt.y != value) {
       if (_targetScreenPt == null)
         _targetScreenPt = _currentScreenPt.clone() as Pt;
 
@@ -100,14 +82,14 @@ class IsoView extends Sprite implements IsoViewBase {
   }
 
   Pt localToIso(Point localPt) {
-    localPt = localToGlobal( localPt );
-    localPt = _mContainer.globalToLocal( localPt );
-    return IsoMath.screenToIso( new Pt( localPt.x, localPt.y, 0 ));
+    localPt = localToGlobal(localPt);
+    localPt = _mContainer.globalToLocal(localPt);
+    return IsoMath.screenToIso(Pt(localPt.x, localPt.y, 0));
   }
 
   Point isoToLocal(Pt isoPt) {
-    isoPt = IsoMath.isoToScreen( isoPt );
-    var temp = new Point( isoPt.x, isoPt.y );
+    isoPt = IsoMath.isoToScreen(isoPt);
+    var temp = Point(isoPt.x, isoPt.y);
     temp = _mContainer.localToGlobal(temp);
     return globalToLocal(temp);
   }
@@ -118,27 +100,21 @@ class IsoView extends Sprite implements IsoViewBase {
 
   bool _bPositionInvalidated = false;
 
-  /**
-   * Flag indicating if the view is invalidated.  If true, validation will when explicity called.
-   */
+  /// Flag indicating if the view is invalidated.  If true, validation will when explicity called.
   bool get isInvalidated => _bPositionInvalidated;
 
-  /**
-   * Flags the view as needing validation.
-   */
+  /// Flags the view as needing validation.
   invalidatePosition() {
     _bPositionInvalidated = true;
   }
 
-  /**
-   * Convenience method for determining which scenes are invalidated.
-   */
+  /// Convenience method for determining which scenes are invalidated.
   List getInvalidatedScenes() {
     var a = [];
 
-    for (var scene in _scenesArray ) {
+    for (var scene in _scenesArray) {
       if (scene.isInvalidated) {
-        a.add( scene );
+        a.add(scene);
       }
     }
 
@@ -151,23 +127,21 @@ class IsoView extends Sprite implements IsoViewBase {
 
   isoRender([bool recursive = false]) {
     _preRenderLogic();
-    _renderLogic( recursive );
+    _renderLogic(recursive);
     _postRenderLogic();
   }
 
-  /**
-   * Performs any logic prior to executing actual rendering logic on the view.
-   */
-  _preRenderLogic() {// protected
-    dispatchEvent( new IsoEvent( IsoEvent.RENDER ));
+  /// Performs any logic prior to executing actual rendering logic on the view.
+  _preRenderLogic() {
+    // protected
+    dispatchEvent(IsoEvent(IsoEvent.RENDER));
   }
 
-  /**
-   * Performs actual rendering logic on the view.
-   *
-   * @param recursive Flag indicating if child scenes render on the view's validation.  Default value is <code>false</code>.
-   */
-  _renderLogic([bool recursive = false]) { // protected
+  /// Performs actual rendering logic on the view.
+  ///
+  /// @param recursive Flag indicating if child scenes render on the view's validation.  Default value is <code>false</code>.
+  _renderLogic([bool recursive = false]) {
+    // protected
 
     if (_bPositionInvalidated) {
       _validatePosition();
@@ -180,26 +154,23 @@ class IsoView extends Sprite implements IsoViewBase {
       }
     }
 
-    if ( viewRenderers != null && numScenes > 0 ) {
-      for(FactoryBase factory in _viewRendererFactories) {
+    if (viewRenderers != null && numScenes > 0) {
+      for (FactoryBase factory in _viewRendererFactories) {
         ViewRendererBase viewRenderer = factory.newInstance();
-        viewRenderer.renderView( this );
+        viewRenderer.renderView(this);
       }
-      
     }
   }
 
-  /**
-   * Performs any logic after executing actual rendering logic on the view.
-   */
-  _postRenderLogic() { // protected
-    dispatchEvent( new IsoEvent( IsoEvent.RENDER_COMPLETE ));
+  /// Performs any logic after executing actual rendering logic on the view.
+  _postRenderLogic() {
+    // protected
+    dispatchEvent(IsoEvent(IsoEvent.RENDER_COMPLETE));
   }
 
-  /**
-   * Calculates the positional changes and repositions the <code>container</code>.
-   */
-  _validatePosition() {    // protected
+  /// Calculates the positional changes and repositions the <code>container</code>.
+  _validatePosition() {
+    // protected
     var dx = _currentScreenPt.x - _targetScreenPt.x;
     var dy = _currentScreenPt.y - _targetScreenPt.y;
 
@@ -207,20 +178,20 @@ class IsoView extends Sprite implements IsoViewBase {
       var ndx = 0;
       var ndy = 0;
 
-      var rect = _romTarget.getBounds( this );
+      var rect = _romTarget.getBounds(this);
       var isROMBigger = !_romBoundsRect.containsRectangle(rect);
 
-      if ( isROMBigger ) {
-        if ( dx > 0 ) {
+      if (isROMBigger) {
+        if (dx > 0) {
           ndx = min(dx, rect.left.abs());
         } else {
-          ndx = -1 * min( dx.abs(), (rect.right - _romBoundsRect.right).abs());
+          ndx = -1 * min(dx.abs(), (rect.right - _romBoundsRect.right).abs());
         }
 
-        if ( dy > 0 ) {
-          ndy = min( dy, rect.top.abs());
+        if (dy > 0) {
+          ndy = min(dy, rect.top.abs());
         } else {
-          ndy = -1 * min( dy.abs(), (rect.bottom - _romBoundsRect.bottom).abs());
+          ndy = -1 * min(dy.abs(), (rect.bottom - _romBoundsRect.bottom).abs());
         }
       }
 
@@ -234,7 +205,7 @@ class IsoView extends Sprite implements IsoViewBase {
     _mContainer.x += dx;
     _mContainer.y += dy;
 
-    var evt = new IsoEvent( IsoEvent.MOVE );
+    var evt = IsoEvent(IsoEvent.MOVE);
     evt.propName = "currentPt";
     evt.oldValue = _currentScreenPt;
 
@@ -249,17 +220,14 @@ class IsoView extends Sprite implements IsoViewBase {
   //      CENTER
   ///////////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Flag indicating if property changes immediately trigger validation.
-   */
+  /// Flag indicating if property changes immediately trigger validation.
   bool autoUpdate = false;
 
   void centerOnPt(Pt pt, [bool isIsometrc = true]) {
-
     var target = pt.clone() as Pt;
-    if (isIsometrc) IsoMath.isoToScreen( target );
+    if (isIsometrc) IsoMath.isoToScreen(target);
 
-    if ( !usePreciseValues ) {
+    if (!usePreciseValues) {
       target.x = target.x.round();
       target.y = target.y.round();
       target.z = target.z.round();
@@ -287,7 +255,7 @@ class IsoView extends Sprite implements IsoViewBase {
   }
 
   void panTo(num xTo, num yTo) {
-    _targetScreenPt = new Pt( xTo, yTo );
+    _targetScreenPt = Pt(xTo, yTo);
     _bPositionInvalidated = true;
     isoRender();
   }
@@ -312,12 +280,12 @@ class IsoView extends Sprite implements IsoViewBase {
 
   void reset() {
     _zoomContainer.scaleX = _zoomContainer.scaleY = 1;
-    setSize( _w, _h );
+    setSize(_w, _h);
 
     _mContainer.x = 0;
     _mContainer.y = 0;
 
-    _currentScreenPt = new Pt();
+    _currentScreenPt = Pt();
   }
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -326,28 +294,24 @@ class IsoView extends Sprite implements IsoViewBase {
 
   List _viewRendererFactories = [];
 
-  /**
-   * An array of view renderers to affect each scene during the render phase.
-   */
+  /// An array of view renderers to affect each scene during the render phase.
   List get viewRenderers => _viewRendererFactories;
 
   set viewRenderers(List value) {
-    if ( value != null) {
+    if (value != null) {
       var temp = [];
 
-      for (var obj in value ) {
+      for (var obj in value) {
         if (obj is FactoryBase) {
-          temp.add( obj );
+          temp.add(obj);
         }
       }
 
       _viewRendererFactories = temp;
       _bPositionInvalidated = true;
 
-        if (autoUpdate) isoRender();
-
+      if (autoUpdate) isoRender();
     } else {
-
       _viewRendererFactories = [];
     }
   }
@@ -362,92 +326,74 @@ class IsoView extends Sprite implements IsoViewBase {
 
   int get numScenes => _scenesArray.length;
 
-  /**
-   * Adds a scene to the scene container.
-   *
-   * @param scene The scene to add.
-   */
+  /// Adds a scene to the scene container.
+  ///
+  /// @param scene The scene to add.
   void addScene(IsoSceneBase scene) {
-    addSceneAt( scene, _scenesArray.length );
+    addSceneAt(scene, _scenesArray.length);
   }
 
-  /**
-   * Adds a scene to the scene container at the given index.
-   *
-   * @param scene The scene to add.
-   * @param index The index which is assigned to the scene in the scene container.
-   */
+  /// Adds a scene to the scene container at the given index.
+  ///
+  /// @param scene The scene to add.
+  /// @param index The index which is assigned to the scene in the scene container.
   void addSceneAt(IsoSceneBase scene, int index) {
-
-    if (containsScene( scene ) == false) {
+    if (containsScene(scene) == false) {
       _scenesArray.insert(index, scene);
       scene.hostContainer = null;
-      _sceneContainer.addChildAt( scene.container, index );
+      _sceneContainer.addChildAt(scene.container, index);
     } else {
-      throw new ArgumentError( "IsoView instance already contains parameter scene" );
+      throw ArgumentError("IsoView instance already contains parameter scene");
     }
   }
 
-  /**
-   * Determines if a scene is contained within the scene container.
-   *
-   * @param scene The scene to check for.
-   *
-   * @return Boolean returns true if the scene is contained within the scene container, false otherwise.
-   */
+  /// Determines if a scene is contained within the scene container.
+  ///
+  /// @param scene The scene to check for.
+  ///
+  /// @return Boolean returns true if the scene is contained within the scene container, false otherwise.
   bool containsScene(IsoSceneBase scene) {
-
-    for (var childScene in _scenesArray ) {
-      if ( scene == childScene ) return true;
+    for (var childScene in _scenesArray) {
+      if (scene == childScene) return true;
     }
 
     return false;
   }
 
-  /**
-   * Finds a scene by the target's id.
-   *
-   * @param id The target scene's id.
-   *
-   * @return IIsoScene If the target scene is found it will be returned.
-   */
+  /// Finds a scene by the target's id.
+  ///
+  /// @param id The target scene's id.
+  ///
+  /// @return IIsoScene If the target scene is found it will be returned.
   IsoSceneBase getSceneByID(String id) {
-
     for (var scene in _scenesArray) {
-      if ( scene.id == id ) return scene;
+      if (scene.id == id) return scene;
     }
 
     return null;
   }
 
-  /**
-   * Removes a target scene from the scenes container.
-   *
-   * @param scene The target scene to remove.
-   * @return IIsoScene If the target scene is successfully removed, it will be returned, otherwise null is returned.
-   */
+  /// Removes a target scene from the scenes container.
+  ///
+  /// @param scene The target scene to remove.
+  /// @return IIsoScene If the target scene is successfully removed, it will be returned, otherwise null is returned.
   IsoSceneBase removeScene(IsoSceneBase scene) {
-
-    if (containsScene( scene )) {
-      var i = _scenesArray.indexOf( scene );
+    if (containsScene(scene)) {
+      var i = _scenesArray.indexOf(scene);
       _scenesArray.removeAt(i);
-      _sceneContainer.removeChild( scene.container );
+      _sceneContainer.removeChild(scene.container);
 
       return scene;
     } else {
-
       return null;
     }
   }
 
-  /**
-   * Removes all scenes from the scenes container.
-   */
+  /// Removes all scenes from the scenes container.
   void removeAllScenes() {
-
     for (var scene in _scenesArray) {
       if (_sceneContainer.contains(scene.container)) {
-        _sceneContainer.removeChild( scene.container );
+        _sceneContainer.removeChild(scene.container);
         scene.hostContainer = null;
       }
     }
@@ -465,25 +411,21 @@ class IsoView extends Sprite implements IsoViewBase {
   num get width => _w;
   num get height => _h;
 
-  /**
-   * The current size of the IsoView.
-   * Returns a Point whose x corresponds to the width and y corresponds to the height.
-   */
+  /// The current size of the IsoView.
+  /// Returns a Point whose x corresponds to the width and y corresponds to the height.
   Point get size {
-    return new Point( _w, _h );
+    return Point(_w, _h);
   }
 
-  /**
-   * Set the size of the IsoView and repositions child scene objects, masks and borders (where applicable).
-   *
-   * @param w The width to resize to.
-   * @param h The height to resize to.
-   */
+  /// Set the size of the IsoView and repositions child scene objects, masks and borders (where applicable).
+  ///
+  /// @param w The width to resize to.
+  /// @param h The height to resize to.
   void setSize(num w, num h) {
     _w = w.round();
     _h = h.round();
 
-    _romBoundsRect = new Rectangle( 0, 0, _w + 1, _h + 1 );
+    _romBoundsRect = Rectangle(0, 0, _w + 1, _h + 1);
 
     // ToDO: scrollRect wird nicht unterstützt!
     //this.scrollRect = _clipContent ? _romBoundsRect : null;
@@ -500,9 +442,9 @@ class IsoView extends Sprite implements IsoViewBase {
        _mask.graphics.endFill();
      } */
 
-     _drawBorder();
+    _drawBorder();
 
-     //for testing only - adds crosshairs to view border
+    //for testing only - adds crosshairs to view border
     /* _border.graphics.moveTo(0, 0);
        _border.graphics.lineTo(_w, _h);
        _border.graphics.moveTo(_w, 0);
@@ -517,11 +459,9 @@ class IsoView extends Sprite implements IsoViewBase {
 
   bool get clipContent => _clipContent;
 
-  /**
-   * Flag indicating where to allow content to visibly extend beyond the boundries of this IsoView.
-   */
+  /// Flag indicating where to allow content to visibly extend beyond the boundries of this IsoView.
   set clipContent(bool value) {
-    if (_clipContent != value ) {
+    if (_clipContent != value) {
       _clipContent = value;
       reset();
     }
@@ -531,26 +471,22 @@ class IsoView extends Sprite implements IsoViewBase {
   //      RANGE OF MOTION
   ///////////////////////////////////////////////////////////////////////////////
 
-  DisplayObject _romTarget;    // protected
-  Rectangle _romBoundsRect;  // protected
+  DisplayObject _romTarget; // protected
+  Rectangle _romBoundsRect; // protected
 
   DisplayObject get rangeOfMotionTarget => _romTarget;
 
-  /**
-   * The target used to determine the range of motion when moving the <code>container</code>.
-   *
-   * @see #limitRangeOfMotion
-   */
-  set rangeOfMotionTarget(DisplayObject  value) {
+  /// The target used to determine the range of motion when moving the <code>container</code>.
+  ///
+  /// @see #limitRangeOfMotion
+  set rangeOfMotionTarget(DisplayObject value) {
     _romTarget = value;
     limitRangeOfMotion = (_romTarget != null);
   }
 
-  /**
-   * Flag to limit the range of motion.
-   *
-   * @see #rangeOfMotionTarget
-   */
+  /// Flag to limit the range of motion.
+  ///
+  /// @see #rangeOfMotionTarget
   bool limitRangeOfMotion = true;
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -562,19 +498,17 @@ class IsoView extends Sprite implements IsoViewBase {
   //      MAIN CONTAINER
   ///////////////////////////////////////////////////////////////////////////////
 
-  Sprite _mContainer;  // protected
+  Sprite _mContainer; // protected
 
-  /**
-   * The main container whose children include the background container, the iso object container and the foreground container.
-   *
-   * An IsoView's container structure is as follows:
-   * * IsoView
-   *              * zoom container
-   *                      * main container
-   *                              * background container
-   *                              * iso scenes container
-   *                              * foreground container
-   */
+  /// The main container whose children include the background container, the iso object container and the foreground container.
+  ///
+  /// An IsoView's container structure is as follows:
+  /// * IsoView
+  ///              * zoom container
+  ///                      * main container
+  ///                              * background container
+  ///                              * iso scenes container
+  ///                              * foreground container
   Sprite get mainContainer => _mContainer;
 
   //      BACKGROUND CONTAINER
@@ -582,14 +516,11 @@ class IsoView extends Sprite implements IsoViewBase {
 
   Sprite _bgContainer;
 
-  /**
-   * The container for background elements.
-   */
+  /// The container for background elements.
   Sprite get backgroundContainer {
-
     if (_bgContainer == null) {
-      _bgContainer = new Sprite();
-      _mContainer.addChildAt(_bgContainer, 0 );
+      _bgContainer = Sprite();
+      _mContainer.addChildAt(_bgContainer, 0);
     }
 
     return _bgContainer;
@@ -600,13 +531,10 @@ class IsoView extends Sprite implements IsoViewBase {
 
   Sprite _fgContainer;
 
-  /**
-   * The container for foreground elements.
-   */
+  /// The container for foreground elements.
   Sprite get foregroundContainer {
-
     if (_fgContainer == null) {
-      _fgContainer = new Sprite();
+      _fgContainer = Sprite();
       _mContainer.addChild(_fgContainer);
     }
 
@@ -629,22 +557,21 @@ class IsoView extends Sprite implements IsoViewBase {
   bool get showBorder => _showBorder;
 
   set showBorder(bool value) {
-
-    if ( _showBorder != value ) {
+    if (_showBorder != value) {
       _showBorder = value;
       _drawBorder();
     }
   }
 
-  _drawBorder() {    // protected
+  _drawBorder() {
+    // protected
 
     var g = _borderShape.graphics;
     g.clear();
 
     if (_showBorder) {
-      g.rect( 0, 0, _w, _h );
+      g.rect(0, 0, _w, _h);
       g.strokeColor(Color.Black);
     }
   }
-
 }

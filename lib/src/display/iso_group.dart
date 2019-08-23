@@ -1,12 +1,11 @@
 part of stagexl_isometric;
 
 class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
-
   ///////////////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ///////////////////////////////////////////////////////////////////////
 
-  IsoGroup([Map descriptor = null]): super(descriptor);
+  IsoGroup([Map descriptor = null]) : super(descriptor);
 
   ///////////////////////////////////////////////////////////////////////
   //      I ISO SCENE
@@ -19,10 +18,11 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
   }
 
   List get invalidatedChildren {
-    var a = new List();
+    var a = List();
 
     for (NodeBase child in children) {
-      if (child is InvalidationBase && (child as InvalidationBase).isInvalidated) {
+      if (child is InvalidationBase &&
+          (child as InvalidationBase).isInvalidated) {
         a.add(child);
       }
     }
@@ -31,7 +31,7 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
   }
 
   BoundsBase get isoBounds {
-    return _bSizeSetExplicitly ? new PrimitiveBounds(this) : new SceneBounds(this);
+    return _bSizeSetExplicitly ? PrimitiveBounds(this) : SceneBounds(this);
   }
 
   ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
     _bSizeSetExplicitly = !value.isNaN;
   }
 
-  set height(num  value) {
+  set height(num value) {
     super.height = value;
     _bSizeSetExplicitly = value.isNaN;
   }
@@ -59,10 +59,11 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
   //      ISO GROUP
   ///////////////////////////////////////////////////////////////////////
 
-  SceneLayoutRendererBase renderer = new SimpleSceneLayoutRenderer();
+  SceneLayoutRendererBase renderer = SimpleSceneLayoutRenderer();
 
-  _renderLogic([bool recursive = true]) { // protected
-    super._renderLogic( recursive );
+  _renderLogic([bool recursive = true]) {
+    // protected
+    super._renderLogic(recursive);
 
     if (_bIsInvalidated) {
       if (_bSizeSetExplicitly == false) {
@@ -70,19 +71,20 @@ class IsoGroup extends IsoDisplayObject implements IsoSceneBase {
       }
 
       if (renderer == null) {
-        renderer = new SimpleSceneLayoutRenderer();
+        renderer = SimpleSceneLayoutRenderer();
       }
 
-      renderer.renderScene( this );
+      renderer.renderScene(this);
       _bIsInvalidated = false;
     }
   }
 
-  _calculateSizeFromChildren() { // protected
-      var b = new SceneBounds( this );
+  _calculateSizeFromChildren() {
+    // protected
+    var b = SceneBounds(this);
 
-      _isoWidth = b.width;
-      _isoLength = b.length;
-      _isoHeight = b.height;
+    _isoWidth = b.width;
+    _isoLength = b.length;
+    _isoHeight = b.height;
   }
 }

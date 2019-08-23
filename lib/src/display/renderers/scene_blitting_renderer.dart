@@ -1,7 +1,6 @@
 part of stagexl_isometric;
 
 class SceneBlittingRenderer implements SceneRendererBase {
-
   ////////////////////////////////////////////////////
   //      TARGET BITMAP OBJECT
   ////////////////////////////////////////////////////
@@ -11,7 +10,7 @@ class SceneBlittingRenderer implements SceneRendererBase {
 
   dynamic get target => _targetObject;
 
-  set target (dynamic value) {
+  set target(dynamic value) {
     if (_targetObject != value) {
       _targetObject = value;
 
@@ -19,8 +18,9 @@ class SceneBlittingRenderer implements SceneRendererBase {
         _targetBitmap = _targetObject as Bitmap;
       } /*else if (_targetObject.hasOwnProperty("bitmap")) {
         _targetBitmap = _targetObject.bitmap as Bitmap;
-      } */ else {
-        throw new IsoError("");
+      } */
+      else {
+        throw IsoError("");
       }
     }
   }
@@ -31,12 +31,12 @@ class SceneBlittingRenderer implements SceneRendererBase {
   //      RENDER SCENE
   ////////////////////////////////////////////////////
 
-  void renderScene (IsoSceneBase scene) {
-
+  void renderScene(IsoSceneBase scene) {
     if (_targetBitmap == null) return;
 
-    var sortedChildren = new List.from(scene.displayListChildren);
-    sortedChildren.sort(_isoDepthSort); //perform a secondary sort for any hittests
+    var sortedChildren = List.from(scene.displayListChildren);
+    sortedChildren
+        .sort(_isoDepthSort); //perform a secondary sort for any hittests
 
     int i = 0;
     int m = sortedChildren.length;
@@ -47,10 +47,10 @@ class SceneBlittingRenderer implements SceneRendererBase {
       i++;
     }
 
-    var offsetMatrix = new Matrix(1, 0, 0, 0,
-        view.width / 2 - view.currentX, view.height / 2 - view.currentY);
+    var offsetMatrix = Matrix(1, 0, 0, 0, view.width / 2 - view.currentX,
+        view.height / 2 - view.currentY);
 
-    var sceneBitmapData = new BitmapData(view.width, view.height, 0);
+    var sceneBitmapData = BitmapData(view.width, view.height, 0);
     sceneBitmapData.draw(scene.container, offsetMatrix);
 
     _targetBitmap.bitmapData = sceneBitmapData;
@@ -60,7 +60,7 @@ class SceneBlittingRenderer implements SceneRendererBase {
   //      SORT
   ////////////////////////////////////////////////////
 
-  int _isoDepthSort (dynamic childA, dynamic childB) {
+  int _isoDepthSort(dynamic childA, dynamic childB) {
     var boundsA = childA.isoBounds;
     var boundsB = childB.isoBounds;
 

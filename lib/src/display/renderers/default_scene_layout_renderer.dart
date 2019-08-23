@@ -1,13 +1,10 @@
 part of stagexl_isometric;
 
-/**
- * The DefaultSceneLayoutRenderer is the default renderer responsible for performing the isometric position-based depth sorting on the child objects of the target IIsoScene.
- */
+/// The DefaultSceneLayoutRenderer is the default renderer responsible for performing the isometric position-based depth sorting on the child objects of the target IIsoScene.
 class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
-
   // It's faster to make class variables & a method, rather than to do a local function closure
   int _depth;
-  Map _visited = new Map();
+  Map _visited = Map();
   IsoSceneBase _scene;
   Map _dependency;
 
@@ -16,7 +13,6 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
   ////////////////////////////////////////////////////
 
   void renderScene(IsoSceneBase scene) {
-
     _scene = scene;
     //int var startTime:uint = getTimer();
 
@@ -24,7 +20,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
 
     // TODO - cache dependencies between frames, only adjust invalidated objects, keeping old ordering as best as possible
     // IIsoDisplayObject -> [obj that should be behind the key]
-    _dependency = new Map();
+    _dependency = Map();
 
     // For now, use the non-rearranging display list so that the dependency sort will tend to create similar output each pass
     List children = scene.displayListChildren;
@@ -52,8 +48,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
       var frontA = objA.y + objA.length;
       var topA = objA.z + objA.height;
 
-      for(int j = 0; j < max; ++j) {
-
+      for (int j = 0; j < max; ++j) {
         var objB = children[j];
 
         if (_collisionDetectionFunc != null)
@@ -61,7 +56,10 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
 
         // See if B should go behind A
         // simplest possible check, interpenetrations also count as "behind", which does do a bit more work later, but the inner loop tradeoff for a faster check makes up for it
-        if ((objB.x < rightA) && (objB.y < frontA) && (objB.z < topA) && (i != j)) {
+        if ((objB.x < rightA) &&
+            (objB.y < frontA) &&
+            (objB.z < topA) &&
+            (i != j)) {
           behind.add(objB);
         }
       }
@@ -83,7 +81,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
     }
 
     // Clear out temporary dictionary so we're not retaining memory between calls
-    _visited = new Map();
+    _visited = Map();
 
     // DEBUG OUTPUT
 
@@ -94,15 +92,12 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
     //trace("scene layout render time", getTimer() - startTime, "ms (manual sort)");
   }
 
-  /**
-   * Dependency-ordered depth placement of the given objects and its dependencies.
-   */
+  /// Dependency-ordered depth placement of the given objects and its dependencies.
   place(IsoDisplayObject obj) {
-
     _visited[obj] = true;
 
     for (var inner in _dependency[obj]) {
-      if(_visited[inner] == null) {
+      if (_visited[inner] == null) {
         place(inner);
       }
     }
@@ -125,7 +120,7 @@ class DefaultSceneLayoutRenderer implements SceneLayoutRendererBase {
 
   dynamic get collisionDetection => _collisionDetectionFunc;
 
-  set collisionDetection (dynamic value) {
+  set collisionDetection(dynamic value) {
     _collisionDetectionFunc = value;
   }
 }

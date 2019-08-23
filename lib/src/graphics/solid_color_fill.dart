@@ -1,7 +1,6 @@
 part of stagexl_isometric;
 
 class SolidColorFill implements FillBase {
-
   ////////////////////////////////////////////////////////////////////////
   //      ID
   ////////////////////////////////////////////////////////////////////////
@@ -11,28 +10,23 @@ class SolidColorFill implements FillBase {
   final int UID = _IDCount++;
   String _setID = null; // protected
 
-  String get id => (_setID == null || _setID == "") ? "SolidColorFill$UID" : _setID;
+  String get id =>
+      (_setID == null || _setID == "") ? "SolidColorFill$UID" : _setID;
 
-  set id (String value) {
+  set id(String value) {
     _setID = value;
   }
 
-  /**
-   * Constructor
-   */
-  SolidColorFill (int color, num alpha) {
+  /// Constructor
+  SolidColorFill(int color, num alpha) {
     this.color = color;
     this.alpha = alpha;
   }
 
-  /**
-   * The fill color.
-   */
+  /// The fill color.
   int color;
 
-  /**
-   * The transparency of the fill.
-   */
+  /// The transparency of the fill.
   num alpha;
 
   ///////////////////////////////////////////////////////////
@@ -42,12 +36,12 @@ class SolidColorFill implements FillBase {
   var _beginFillColor;
   var _beginFillAlpha;
 
-  void begin (Graphics target) {
+  void begin(Graphics target) {
     _beginFillColor = color;
     _beginFillAlpha = alpha;
   }
 
-  void end(Graphics target ) {
+  void end(Graphics target) {
     // ToDo: _beginFillAlpha
 
     var color = (_beginFillColor & 0xFFFFFF) | ((0xFF * alpha).toInt() << 24);
@@ -55,6 +49,6 @@ class SolidColorFill implements FillBase {
   }
 
   FillBase clone() {
-    return new SolidColorFill(color, alpha);
+    return SolidColorFill(color, alpha);
   }
 }

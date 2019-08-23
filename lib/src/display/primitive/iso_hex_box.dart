@@ -1,7 +1,6 @@
 part of stagexl_isometric;
 
 class IsoHexBox extends IsoPrimitive {
-
   static final num sin60 = sin(pi / 3);
   static final num cos60 = cos(pi / 3);
 
@@ -9,7 +8,7 @@ class IsoHexBox extends IsoPrimitive {
   //      CONSTRUCTOR
   //////////////////////////////////////////////////
 
-  IsoHexBox ([Map descriptor = null]) : super(descriptor);
+  IsoHexBox([Map descriptor = null]) : super(descriptor);
 
   //////////////////////////////////////////////////
   //      SIZE
@@ -17,7 +16,7 @@ class IsoHexBox extends IsoPrimitive {
 
   num _diameter = 0;
 
-  set width (num value) {
+  set width(num value) {
     _diameter = value;
 
     var sideLength = value / 2;
@@ -26,7 +25,7 @@ class IsoHexBox extends IsoPrimitive {
     super.width = value;
   }
 
-  set length (num value) {
+  set length(num value) {
     var sideLength = value / 2 * sin60;
     _isoWidth = _diameter = 2 * sideLength;
 
@@ -37,30 +36,43 @@ class IsoHexBox extends IsoPrimitive {
   //      GEOMETRY
   //////////////////////////////////////////////////
 
-  _drawGeometry () { // protected
+  _drawGeometry() {
+    // protected
     //calculate pts
     var sideLength = _diameter / 2;
 
-    var ptb0 = new Pt(sideLength / 2, 0, 0);
+    var ptb0 = Pt(sideLength / 2, 0, 0);
     var ptb1 = Pt.polar(ptb0, sideLength, 0);
     var ptb2 = Pt.polar(ptb1, sideLength, pi / 3);
     var ptb3 = Pt.polar(ptb2, sideLength, 2 * pi / 3);
     var ptb4 = Pt.polar(ptb3, sideLength, pi);
     var ptb5 = Pt.polar(ptb4, sideLength, 4 * pi / 3);
 
-    var ptt0 = new Pt(sideLength / 2, 0, height);
+    var ptt0 = Pt(sideLength / 2, 0, height);
     var ptt1 = Pt.polar(ptt0, sideLength, 0);
     var ptt2 = Pt.polar(ptt1, sideLength, pi / 3);
     var ptt3 = Pt.polar(ptt2, sideLength, 2 * pi / 3);
     var ptt4 = Pt.polar(ptt3, sideLength, pi);
     var ptt5 = Pt.polar(ptt4, sideLength, 4 * pi / 3);
 
-    var pts = [ptb0, ptb1, ptb2, ptb3, ptb4, ptb5, ptt0, ptt1, ptt2, ptt3, ptt4, ptt5];
-    for (var pt in pts)
-      IsoMath.isoToScreen(pt);
+    var pts = [
+      ptb0,
+      ptb1,
+      ptb2,
+      ptb3,
+      ptb4,
+      ptb5,
+      ptt0,
+      ptt1,
+      ptt2,
+      ptt3,
+      ptt4,
+      ptt5
+    ];
+    for (var pt in pts) IsoMath.isoToScreen(pt);
 
     //draw bottom hex face
-    Graphics  g = _mainContainer.graphics;
+    Graphics g = _mainContainer.graphics;
     g.clear();
 
     var s = strokes.length >= 8 ? strokes[7] : IsoPrimitive.DEFAULT_STROKE;
@@ -88,7 +100,8 @@ class IsoHexBox extends IsoPrimitive {
     f = fills.length >= 5 ? fills[4] : IsoPrimitive.DEFAULT_FILL;
 
     if (f != null) {
-      if (f is BitmapFill)  f.orientation = new Matrix(1, tan(Pt.theta(ptb4, ptb5)), 0, 1, 0, 0);
+      if (f is BitmapFill)
+        f.orientation = Matrix(1, tan(Pt.theta(ptb4, ptb5)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -106,7 +119,8 @@ class IsoHexBox extends IsoPrimitive {
     f = fills.length >= 6 ? fills[5] : IsoPrimitive.DEFAULT_FILL;
 
     if (f != null) {
-      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb5, ptb0)), 0, 1, 0, 0);
+      if (f is BitmapFill)
+        f.orientation = Matrix(1, tan(Pt.theta(ptb5, ptb0)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -142,7 +156,8 @@ class IsoHexBox extends IsoPrimitive {
     f = fills.length >= 2 ? fills[1] : IsoPrimitive.DEFAULT_FILL;
 
     if (f != null) {
-      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb2, ptb1)), 0, 1, 0, 0);
+      if (f is BitmapFill)
+        f.orientation = Matrix(1, tan(Pt.theta(ptb2, ptb1)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -161,7 +176,8 @@ class IsoHexBox extends IsoPrimitive {
     //f = fills[2];
 
     if (f != null) {
-      if (f is BitmapFill) f.orientation = new Matrix(1, tan(Pt.theta(ptb3, ptb2)), 0, 1, 0, 0);
+      if (f is BitmapFill)
+        f.orientation = Matrix(1, tan(Pt.theta(ptb3, ptb2)), 0, 1, 0, 0);
       f.begin(g);
     }
 
@@ -213,8 +229,7 @@ class IsoHexBox extends IsoPrimitive {
     if (s != null) s.apply(g);
   }
 
-  set stroke (StrokeBase value) {
+  set stroke(StrokeBase value) {
     strokes = [value, value, value, value, value, value, value, value];
   }
-
 }

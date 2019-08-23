@@ -1,12 +1,8 @@
 part of stagexl_isometric;
 
-
-/**
- * IsoSprite is the base class in which visual assets may be attached to be presented in 3D isometric space.
- * Since visual assets may not clearly define a volume in 3D isometric space, the developer is responsible for establishing the width, length and height properties.
- */
+/// IsoSprite is the base class in which visual assets may be attached to be presented in 3D isometric space.
+/// Since visual assets may not clearly define a volume in 3D isometric space, the developer is responsible for establishing the width, length and height properties.
 class IsoSprite extends IsoDisplayObject {
-
   ////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ////////////////////////////////////////////////////////////
@@ -17,16 +13,14 @@ class IsoSprite extends IsoDisplayObject {
   //      SKINS
   ////////////////////////////////////////////////////////////
 
-  List _spritesArray = new List();  // protected
+  List _spritesArray = List(); // protected
 
   List get sprites => _spritesArray;
 
-  /**
-   * An array of visual assets to be attached.
-   * Elements in the array are expected be of type DisplayObject or BitmapData.
-   */
+  /// An array of visual assets to be attached.
+  /// Elements in the array are expected be of type DisplayObject or BitmapData.
   set sprites(List value) {
-    if (_spritesArray != value ) {
+    if (_spritesArray != value) {
       _spritesArray = value;
       _bSpritesInvalidated = true;
     }
@@ -34,7 +28,7 @@ class IsoSprite extends IsoDisplayObject {
 
   List _actualSpriteObjects = []; // protected
 
-  List get actualSprites => new List.from(_actualSpriteObjects);
+  List get actualSprites => List.from(_actualSpriteObjects);
 
   ////////////////////////////////////////////////////////////
   //      INVALIDATION
@@ -42,16 +36,12 @@ class IsoSprite extends IsoDisplayObject {
 
   bool _bSpritesInvalidated = false;
 
-  /**
-   * This method has been deprecated.  Use invalidateSprites instead.
-   */
+  /// This method has been deprecated.  Use invalidateSprites instead.
   invalidateSkins() {
     _bSpritesInvalidated = true;
   }
 
-  /**
-   * Flags the IsoSprite for invalidation reflecting changes of the spite objects contained in <code>sprites</code>.
-   */
+  /// Flags the IsoSprite for invalidation reflecting changes of the spite objects contained in <code>sprites</code>.
   invalidateSprites() {
     _bSpritesInvalidated = true;
   }
@@ -62,48 +52,43 @@ class IsoSprite extends IsoDisplayObject {
   //      RENDER
   ////////////////////////////////////////////////////////////
 
-  /**
-   * @inheritDoc
-   */
-  _renderLogic([bool recursive = true]) { // protected
+  /// @inheritDoc
+  _renderLogic([bool recursive = true]) {
+    // protected
 
     if (_bSpritesInvalidated) {
       _renderSprites();
       _bSpritesInvalidated = false;
     }
 
-    super._renderLogic( recursive );
+    super._renderLogic(recursive);
   }
 
-  _renderSprites() {// protected
+  _renderSprites() {
+    // protected
 
     //remove all previous skins
     _actualSpriteObjects = [];
 
-    while (_mainContainer.numChildren > 0 )
-      _mainContainer.removeChildAt(0);
+    while (_mainContainer.numChildren > 0) _mainContainer.removeChildAt(0);
 
     for (var spriteObj in _spritesArray) {
-
       if (spriteObj is BitmapData) {
-
-        var b = new Bitmap(spriteObj);
+        var b = Bitmap(spriteObj);
         _mainContainer.addChild(b);
         _actualSpriteObjects.add(b);
-
       } else if (spriteObj is DisplayObject) {
-
         _mainContainer.addChild(spriteObj);
         _actualSpriteObjects.add(spriteObj);
-
       } else {
-
-        throw new ArgumentError( "skin asset is not of the following types: BitmapData, DisplayObject" );
+        throw ArgumentError(
+            "skin asset is not of the following types: BitmapData, DisplayObject");
       }
     }
   }
 
-  _createChildren() { // protected
+  _createChildren() {
+    // protected
 
     super._createChildren();
 
@@ -111,5 +96,4 @@ class IsoSprite extends IsoDisplayObject {
     //_mainContainer = new Sprite();
     //_attachMainContainerEventListeners();
   }
-
 }

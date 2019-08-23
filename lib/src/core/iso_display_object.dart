@@ -1,26 +1,22 @@
 part of stagexl_isometric;
 
-/**
- * IsoDisplayObject is the base class that all primitive and complex isometric display objects should extend.
- * Developers should not instantiate this class but rather extend it.
- */
+/// IsoDisplayObject is the base class that all primitive and complex isometric display objects should extend.
+/// Developers should not instantiate this class but rather extend it.
 
 class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
-
-
   /////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   /////////////////////////////////////////////////////////
 
   IsoDisplayObject([Map descriptor = null]) : super() {
-    if (descriptor != null ) {
-      _createObjectFromDescriptor( descriptor );
+    if (descriptor != null) {
+      _createObjectFromDescriptor(descriptor);
     }
   }
 
   void _createObjectFromDescriptor(Map descriptor) {
     // ToDo
-    throw new Error();
+    throw Error();
     /*
           var prop:String;
           for ( prop in descriptor )
@@ -31,7 +27,6 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
     */
   }
 
-
   //////////////////////////////////////////////////////////////////
   //      GET RENDER DATA
   //////////////////////////////////////////////////////////////////
@@ -39,20 +34,19 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   RenderData _cachedRenderData;
 
   RenderData getRenderData() {
-
     var r = _mainContainer.getBounds(_mainContainer);
 
-    if (isInvalidated || _cachedRenderData == null ) {
-
-      var flag = _bRenderAsOrphan; //set to allow for rendering regardless of hierarchy
+    if (isInvalidated || _cachedRenderData == null) {
+      var flag =
+          _bRenderAsOrphan; //set to allow for rendering regardless of hierarchy
       _bRenderAsOrphan = true;
 
       isoRender(true);
 
-      var bd = new BitmapData( r.width + 1, r.height + 1, 0x000000 );
-      bd.draw(_mainContainer, new Matrix( 1, 0, 0, 1, -r.left, -r.top ) );
+      var bd = BitmapData(r.width + 1, r.height + 1, 0x000000);
+      bd.draw(_mainContainer, Matrix(1, 0, 0, 1, -r.left, -r.top));
 
-      var renderData = new RenderData();
+      var renderData = RenderData();
       renderData.x = _mainContainer.x + r.left;
       renderData.y = _mainContainer.y + r.top;
       renderData.bitmapData = bd;
@@ -84,20 +78,18 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   //      BOUNDS
   ////////////////////////////////////////////////////////////////////////
 
-  BoundsBase _isoBoundsObject;  // protected
+  BoundsBase _isoBoundsObject; // protected
 
   BoundsBase get isoBounds {
-
     if (_isoBoundsObject == null || isInvalidated) {
-      _isoBoundsObject = new PrimitiveBounds(this);
+      _isoBoundsObject = PrimitiveBounds(this);
     }
 
     return _isoBoundsObject;
   }
 
   Rectangle get screenBounds {
-
-    var screenBounds = _mainContainer.getBounds( _mainContainer );
+    var screenBounds = _mainContainer.getBounds(_mainContainer);
     screenBounds.left += _mainContainer.x;
     screenBounds.top += _mainContainer.y;
 
@@ -105,9 +97,8 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   }
 
   Rectangle getBounds(DisplayObject targetCoordinateSpace) {
-
     var rect = screenBounds;
-    var pt = new Point( rect.left, rect.top );
+    var pt = Point(rect.left, rect.top);
     pt = (parent as IsoContainerBase).container.localToGlobal(pt);
     pt = targetCoordinateSpace.globalToLocal(pt);
 
@@ -118,11 +109,11 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   }
 
   num get inverseOriginX {
-    return IsoMath.isoToScreen( new Pt( x + width, y + length, z ) ).x;
+    return IsoMath.isoToScreen(Pt(x + width, y + length, z)).x;
   }
 
   num get inverseOriginY {
-    return IsoMath.isoToScreen( new Pt( x + width, y + length, z ) ).y;
+    return IsoMath.isoToScreen(Pt(x + width, y + length, z)).y;
   }
 
   /////////////////////////////////////////////////////////
@@ -149,9 +140,7 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   //      USE PRECISE VALUES
   ////////////////////////////////////////////////////////////////////////
 
-  /**
-   * Flag indicating if positional and dimensional values are rounded to the nearest whole number or not.
-   */
+  /// Flag indicating if positional and dimensional values are rounded to the nearest whole number or not.
   bool usePreciseValues = false;
 
   ////////////////////////////////////////////////////////////////////////
@@ -159,17 +148,16 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   ////////////////////////////////////////////////////////////////////////
 
   num _isoX = 0;
-  num _oldX = 0;    // protected
+  num _oldX = 0; // protected
 
   num get x => _isoX;
 
   set x(num value) {
-
     if (usePreciseValues == false) {
       value = value.round();
     }
 
-    if (_isoX != value ) {
+    if (_isoX != value) {
       _oldX = _isoX;
       _isoX = value;
       invalidatePosition();
@@ -177,24 +165,23 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
     }
   }
 
-  num get screenX  => IsoMath.isoToScreen( new Pt( x, y, z ) ).x;
+  num get screenX => IsoMath.isoToScreen(Pt(x, y, z)).x;
 
   ////////////////////////////////////////////////////////////////////////
   //      Y
   ////////////////////////////////////////////////////////////////////////
 
   num _isoY = 0;
-  num _oldY = 0;  // protected
+  num _oldY = 0; // protected
 
   num get y => _isoY;
 
   set y(num value) {
-
     if (usePreciseValues == false) {
-      value =  value.round();
+      value = value.round();
     }
 
-    if (_isoY != value ) {
+    if (_isoY != value) {
       _oldY = _isoY;
       _isoY = value;
       invalidatePosition();
@@ -202,24 +189,23 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
     }
   }
 
-  num get screenY => IsoMath.isoToScreen( new Pt( x, y, z ) ).y;
+  num get screenY => IsoMath.isoToScreen(Pt(x, y, z)).y;
 
   ////////////////////////////////////////////////////////////////////////
   //      Z
   ////////////////////////////////////////////////////////////////////////
 
   num _isoZ = 0;
-  num _oldZ = 0;  // protected
+  num _oldZ = 0; // protected
 
   num get z => _isoZ;
 
   set z(num value) {
-
     if (usePreciseValues == false) {
       value = value.round();
     }
 
-    if (_isoZ != value ) {
+    if (_isoZ != value) {
       _oldZ = _isoZ;
       _isoZ = value;
       invalidatePosition();
@@ -254,19 +240,18 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   ////////////////////////////////////////////////////////////////////////
 
   num _isoWidth = 0;
-  num _oldWidth = 0;  // protected
+  num _oldWidth = 0; // protected
 
   num get width => _isoWidth;
 
   set width(num value) {
-
     if (usePreciseValues == false) {
       value = value.round();
     }
 
     value = value.abs();
 
-    if (_isoWidth != value ) {
+    if (_isoWidth != value) {
       _oldWidth = _isoWidth;
       _isoWidth = value;
       invalidateSize();
@@ -284,14 +269,13 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   num get length => _isoLength;
 
   set length(num value) {
-
     if (usePreciseValues == false) {
       value = value.round();
     }
 
     value = value.abs();
 
-    if (_isoLength != value ) {
+    if (_isoLength != value) {
       _oldLength = _isoLength;
       _isoLength = value;
       invalidateSize();
@@ -309,14 +293,13 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   num get height => _isoHeight;
 
   set height(num value) {
-
     if (usePreciseValues == false) {
       value = value.round();
     }
 
     value = value.abs();
 
-    if (_isoHeight != value ) {
+    if (_isoHeight != value) {
       _oldHeight = _isoHeight;
       _isoHeight = value;
       invalidateSize();
@@ -340,12 +323,11 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   //      RENDERING
   /////////////////////////////////////////////////////////
 
-  /**
-   * Flag indicating whether a property change will automatically trigger a render phase.
-   */
+  /// Flag indicating whether a property change will automatically trigger a render phase.
   bool autoUpdate = false;
 
-  _renderLogic([bool recursive = true]) {   // // protected
+  _renderLogic([bool recursive = true]) {
+    // // protected
 
     if (!hasParent && !renderAsOrphan) return;
 
@@ -362,16 +344,14 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
     //set the flag back for the next time we invalidate the object
     _bInvalidateEventDispatched = false;
 
-    super._renderLogic( recursive );
+    super._renderLogic(recursive);
   }
 
   ////////////////////////////////////////////////////////////////////////
   //      INCLUDE LAYOUT
   ////////////////////////////////////////////////////////////////////////
 
-  /**
-   * @inheritDoc
-   */
+  /// @inheritDoc
   /* override public function set includeInLayout (value:Boolean):void
      {
      super.includeInLayout = value;
@@ -389,64 +369,66 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   //      VALIDATION
   /////////////////////////////////////////////////////////
 
-  /**
-   * Takes the given 3D isometric coordinates and positions them in cartesian coordinates relative to the parent container.
-   */
-  _validatePosition() { // protected
+  /// Takes the given 3D isometric coordinates and positions them in cartesian coordinates relative to the parent container.
+  _validatePosition() {
+    // protected
 
-    var pt = new Pt( x, y, z );
-    IsoMath.isoToScreen( pt );
+    var pt = Pt(x, y, z);
+    IsoMath.isoToScreen(pt);
 
     _mainContainer.x = pt.x;
     _mainContainer.y = pt.y;
 
-    var evt = new IsoEvent( IsoEvent.MOVE, true );
+    var evt = IsoEvent(IsoEvent.MOVE, true);
     evt.propName = "position";
-    evt.oldValue = { "x" : _oldX, "y" : _oldY, "z" : _oldZ };
-    evt.newValue = { "x" : _isoX, "y" : _isoY, "z" : _isoZ };
+    evt.oldValue = {"x": _oldX, "y": _oldY, "z": _oldZ};
+    evt.newValue = {"x": _isoX, "y": _isoY, "z": _isoZ};
     dispatchEvent(evt);
   }
 
-  /**
-   * Takes the given 3D isometric sizes and performs the necessary rendering logic.
-   */
-  _validateSize() {  // protected
-    var evt = new IsoEvent( IsoEvent.RESIZE, true );
+  /// Takes the given 3D isometric sizes and performs the necessary rendering logic.
+  _validateSize() {
+    // protected
+    var evt = IsoEvent(IsoEvent.RESIZE, true);
     evt.propName = "size";
-    evt.oldValue = { "width" : _oldWidth, "length" : _oldLength, "height" : _oldHeight };
-    evt.newValue = { "width" : _isoWidth, "length" : _isoLength, "height" : _isoHeight };
-    dispatchEvent( evt );
+    evt.oldValue = {
+      "width": _oldWidth,
+      "length": _oldLength,
+      "height": _oldHeight
+    };
+    evt.newValue = {
+      "width": _isoWidth,
+      "length": _isoLength,
+      "height": _isoHeight
+    };
+    dispatchEvent(evt);
   }
 
   /////////////////////////////////////////////////////////
   //      INVALIDATION
   /////////////////////////////////////////////////////////
 
-  /**
-   *
-   * Flag indicated that an IsoEvent.INVALIDATE has already been dispatched, negating the need to dispatch another.
-   */
+  ///
+  /// Flag indicated that an IsoEvent.INVALIDATE has already been dispatched, negating the need to dispatch another.
   bool _bInvalidateEventDispatched = false;
 
   bool _bPositionInvalidated = false;
   bool _bSizeInvalidated = false;
 
   void invalidatePosition() {
-
     _bPositionInvalidated = true;
 
     if (_bInvalidateEventDispatched == false) {
-      dispatchEvent( new IsoEvent( IsoEvent.INVALIDATE ) );
+      dispatchEvent(IsoEvent(IsoEvent.INVALIDATE));
       _bInvalidateEventDispatched = true;
     }
   }
 
   void invalidateSize() {
-
     _bSizeInvalidated = true;
 
     if (_bInvalidateEventDispatched == false) {
-      dispatchEvent( new IsoEvent( IsoEvent.INVALIDATE ) );
+      dispatchEvent(IsoEvent(IsoEvent.INVALIDATE));
       _bInvalidateEventDispatched = true;
     }
   }
@@ -457,7 +439,8 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   //      CREATE CHILDREN
   /////////////////////////////////////////////////////////
 
-  _createChildren() {   // protected
+  _createChildren() {
+    // protected
     super._createChildren();
     //_mainContainer.cacheAsBitmap = _isAnimated;
   }
@@ -469,7 +452,7 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
   dynamic clone() {
     // ToDo
 
-    throw new Error();
+    throw Error();
     /*
     var CloneClass:Class = getDefinitionByName( getQualifiedClassName( this ) ) as Class;
     var cloneInstance:IIsoDisplayObject = new CloneClass();
@@ -477,5 +460,4 @@ class IsoDisplayObject extends IsoContainer implements IsoDisplayObjectBase {
     return cloneInstance;
     */
   }
-
 }

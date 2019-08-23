@@ -1,17 +1,13 @@
 part of stagexl_isometric;
 
-/**
- * IsoPrimitive is the base class for primitive-type classes that will make great use of Flash's drawing API.
- * Developers should not directly instantiate this class but rather extend it or one of the other primitive-type subclasses.
- */
+/// IsoPrimitive is the base class for primitive-type classes that will make great use of Flash's drawing API.
+/// Developers should not directly instantiate this class but rather extend it or one of the other primitive-type subclasses.
 class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
-
   ////////////////////////////////////////////////////////////
   //      CONSTRUCTOR
   ////////////////////////////////////////////////////////////
 
-  IsoPrimitive ([Map descriptor = null]) : super(descriptor) {
-
+  IsoPrimitive([Map descriptor = null]) : super(descriptor) {
     if (descriptor == null) {
       width = DEFAULT_WIDTH;
       length = DEFAULT_LENGTH;
@@ -35,7 +31,7 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   String get styleType => _renderStyle;
 
-  set styleType (String value) {
+  set styleType(String value) {
     if (_renderStyle != value) {
       _renderStyle = value;
       invalidateStyles();
@@ -48,8 +44,6 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   //      MATERIALS
   //////////////////////////////
 
-
-
   //      PROFILE STROKE
   //////////////////////////////
 
@@ -57,7 +51,7 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   StrokeBase get profileStroke => _pStroke;
 
-  set profileStroke (StrokeBase value) {
+  set profileStroke(StrokeBase value) {
     if (_pStroke != value) {
       _pStroke = value;
       invalidateStyles();
@@ -71,24 +65,24 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   FillBase get fill => fills[0];
 
-  set fill (FillBase value) {
+  set fill(FillBase value) {
     fills = [value, value, value, value, value, value];
   }
 
   //      FILLS
   //////////////////////////////
 
-  static final FillBase DEFAULT_FILL = new SolidColorFill(0xFFFFFFFF, 1);
+  static final FillBase DEFAULT_FILL = SolidColorFill(0xFFFFFFFF, 1);
 
-  List<FillBase> _fillsArray  = new List();
+  List<FillBase> _fillsArray = List();
 
-  List<FillBase> get fills => new List<FillBase>.from(_fillsArray);
+  List<FillBase> get fills => List<FillBase>.from(_fillsArray);
 
-  void set fills (List value) {
+  void set fills(List value) {
     if (value != null) {
-      _fillsArray = new List<FillBase>.from(value);
+      _fillsArray = List<FillBase>.from(value);
     } else {
-      _fillsArray = new List<FillBase>();
+      _fillsArray = List<FillBase>();
     }
 
     invalidateStyles();
@@ -100,25 +94,24 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
   StrokeBase get stroke => strokes[0];
 
-  set stroke (StrokeBase value) {
+  set stroke(StrokeBase value) {
     strokes = [value, value, value, value, value, value];
   }
 
   //      STROKES
   //////////////////////////////
 
-  static final StrokeBase DEFAULT_STROKE = new Stroke(0, 0xFF000000);
+  static final StrokeBase DEFAULT_STROKE = Stroke(0, 0xFF000000);
 
-  List<StrokeBase> _edgesArray = new List<StrokeBase>();
+  List<StrokeBase> _edgesArray = List<StrokeBase>();
 
-  List<StrokeBase> get strokes => new List<StrokeBase>.from(_edgesArray);
+  List<StrokeBase> get strokes => List<StrokeBase>.from(_edgesArray);
 
-  set strokes (covariant List<StrokeBase> value) {
-
+  set strokes(covariant List<StrokeBase> value) {
     if (value != null) {
-      _edgesArray = new List<StrokeBase>.from(value);
+      _edgesArray = List<StrokeBase>.from(value);
     } else {
-      _edgesArray = new List<StrokeBase>();
+      _edgesArray = List<StrokeBase>();
     }
 
     invalidateStyles();
@@ -129,22 +122,22 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   //      RENDER
   /////////////////////////////////////////////////////////
 
-  _renderLogic ([bool recursive = true]) { // protected
+  _renderLogic([bool recursive = true]) {
+    // protected
 
     if (!hasParent && !renderAsOrphan) return;
 
     //we do this before calling super.isoRender() so as to only perform drawing logic for the size or style invalidation, not both.
     if (_bSizeInvalidated || _bSytlesInvalidated) {
-
       if (_validateGeometry() == false) {
-        throw new ArgumentError("validation of geometry failed.");
+        throw ArgumentError("validation of geometry failed.");
       }
 
       _drawGeometry();
       _validateSize();
 
-       _bSizeInvalidated = false;
-       _bSytlesInvalidated = false;
+      _bSizeInvalidated = false;
+      _bSytlesInvalidated = false;
     }
 
     super._renderLogic(recursive);
@@ -154,12 +147,14 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   //      VALIDATION
   /////////////////////////////////////////////////////////
 
-  bool _validateGeometry() { // protected
+  bool _validateGeometry() {
+    // protected
     //overridden by subclasses
     return true;
   }
 
-  void _drawGeometry()  { // protected
+  void _drawGeometry() {
+    // protected
     //overridden by subclasses
   }
 
@@ -172,13 +167,14 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
   invalidateStyles() {
     _bSytlesInvalidated = true;
 
-     if (_bInvalidateEventDispatched == false) {
-      dispatchEvent(new IsoEvent(IsoEvent.INVALIDATE));
+    if (_bInvalidateEventDispatched == false) {
+      dispatchEvent(IsoEvent(IsoEvent.INVALIDATE));
       _bInvalidateEventDispatched = true;
     }
   }
 
-  bool get isInvalidated => (_bSizeInvalidated || _bPositionInvalidated || _bSytlesInvalidated);
+  bool get isInvalidated =>
+      (_bSizeInvalidated || _bPositionInvalidated || _bSytlesInvalidated);
 
   ////////////////////////////////////////////////////////////
   //      CLONE
@@ -192,5 +188,4 @@ class IsoPrimitive extends IsoDisplayObject implements IsoPrimitiveBase {
 
     return cloneInstance;
   }
-
 }
